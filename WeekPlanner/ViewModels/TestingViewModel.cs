@@ -54,6 +54,7 @@ namespace WeekPlanner.ViewModels
         public ICommand NavigateToPictogramSearchCommand =>
             new Command(async () => await NavigationService.NavigateToAsync<PictogramSearchViewModel>());
 
-
+        public ICommand NavigateToWeekTemplateFindCommand =>
+        new Command(async () => await NavigationService.NavigateToAsync<WeekTemplateViewModel>());
 	}
 }

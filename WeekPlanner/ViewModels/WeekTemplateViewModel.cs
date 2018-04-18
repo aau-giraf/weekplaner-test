@@ -6,21 +6,23 @@ using IO.Swagger.Client;
 using IO.Swagger.Model;
 using WeekPlanner.Services.Navigation;
 using WeekPlanner.ViewModels.Base;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace WeekPlanner.ViewModels
 {
     public class WeekTemplateViewModel : ViewModelBase
     {
         private readonly IWeekTemplateApi _weekTemplateApi;
-        
-        public WeekTemplateViewModel(INavigationService navigationService, 
+
+        public WeekTemplateViewModel(INavigationService navigationService,
             IWeekTemplateApi weekTemplateApi) : base(navigationService)
         {
             _weekTemplateApi = weekTemplateApi;
         }
 
         private IEnumerable<WeekNameDTO> _weekNameDtos;
-        
+
         public IEnumerable<WeekNameDTO> WeekNameDtos
         {
             get => _weekNameDtos;
@@ -44,10 +46,24 @@ namespace WeekPlanner.ViewModels
                 return;
             }
 
-            if (result.Success == true)
+            if (result.Success == true && result.Data.Count > 0)
             {
                 WeekNameDtos = result.Data;
+
+            }
+            else
+            {
+                //send besked om at der ikke kan findes noget data
             }
         }
+
+        //Hvordan gemmes det i en bestemt uge?
+        private async Task NavigateToTemplate(WeekNameDTO dto)
+        {
+            await NavigationService.NavigateToAsync<WeekPlannerViewModel>(dto);
+        }
+
+        public ICommand ChooseTemplateCommand => new Command<WeekNameDTO>(async dto => await NavigateToTemplate(dto));
+
     }
 }

@@ -16,6 +16,9 @@
                     Text="Vælg borger"
                     Command="{Binding NavigateToChooseCitizenCommand}" />
                 <Button
+                    Text ="Find template"
+                    Command="{Binding NavigateToWeekTemplateFindCommand}" />
+                <Button
                     Text="Ugeplan"
                     Command="{Binding NavigateToWeekPlannerCommand}" />
                 <Button

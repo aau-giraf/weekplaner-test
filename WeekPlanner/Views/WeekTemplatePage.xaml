@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="WeekPlanner.Views.WeekTemplatePage"
+             xmlns:behaviors1="clr-namespace:WeekPlanner.Behaviors;assembly=WeekPlanner"
+             xmlns:base1="clr-namespace:WeekPlanner.ViewModels.Base;assembly=WeekPlanner"
+             base1:ViewModelLocator.AutoWireViewModel="true"
+             Title="Vælg Skabelon">
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView 
+                x:Name="TemplateListView" 
+                ItemsSource="{Binding WeekNameDtos}" 
+                VerticalOptions="FillAndExpand" 
+                HasUnevenRows="true"
+                RowHeight="100">
+                <ListView.Behaviors>
+                    <behaviors1:EventToCommandBehavior         
+                        EventName="ItemTapped"
+                        Command="{Binding ChooseTemplateCommand}"
+                        EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}" />
+                    <behaviors1:ListViewDeselectSelectedItemBehavior />
+                </ListView.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal">
+                                <Button Text="{Binding Name}"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
