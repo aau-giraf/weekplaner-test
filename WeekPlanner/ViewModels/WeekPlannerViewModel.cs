@@ -96,6 +96,11 @@ namespace WeekPlanner.ViewModels
                 await _loginService.LoginAndThenAsync(GetWeekPlanForCitizenAsync, UserType.Citizen,
                     userNameDTO.UserName);
             }
+            else if (navigationData is WeekDTO week)
+            {
+                WeekDTO = week;
+                SetWeekdayPictos();
+            }
             else
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
@@ -188,10 +193,10 @@ namespace WeekPlanner.ViewModels
                 if (day.Day == null) continue;
                 var weekday = day.Day.Value;
                 ObservableCollection<string> pictos = new ObservableCollection<string>();
-                foreach (var eleID in day.ElementIDs)
+                foreach (var eleID in day.Elements)
                 {
                     pictos.Add(
-                        GlobalSettings.DefaultEndpoint + $"/v1/pictogram/{eleID}/image/raw");
+                        GlobalSettings.DefaultEndpoint + $"/v1/pictogram/{eleID.Id}/image/raw");
                 }
 
                 tempDict.Add(weekday, pictos);
