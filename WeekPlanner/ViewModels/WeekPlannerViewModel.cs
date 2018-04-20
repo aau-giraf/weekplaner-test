@@ -210,7 +210,9 @@ namespace WeekPlanner.ViewModels
         {
             if (EditModeEnabled)
             {
-                EditModeEnabled = false;
+                EditModeEnabled = false;				
+				MessagingCenter.Send(this, "forcePortrait");
+				
                 UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
             }
             else
