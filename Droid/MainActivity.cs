@@ -19,7 +19,13 @@ namespace WeekPlanner.Droid
 
 			base.OnCreate(bundle);
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+			// Manages orientation for citizen weekplannerpage
+			MessagingCenter.Subscribe<WeekPlannerPage>(this, "forcePortrait", callback =>
+			{
+				RequestedOrientation = ScreenOrientation.Portrait;
+			});
+
+			global::Xamarin.Forms.Forms.Init(this, bundle);
             // Load ffimageloading
             CachedImageRenderer.Init(enableFastRenderer: true);
             // Load Acr.UserDialogs
