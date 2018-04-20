@@ -2,7 +2,8 @@
 using Foundation;
 using ObjCRuntime;
 using UIKit;
-using WeekPlanner.Views;
+using WeekPlanner.ViewModels;
+using Xamarin.Forms;
 
 namespace WeekPlanner.iOS
 {
@@ -12,7 +13,10 @@ namespace WeekPlanner.iOS
 		
 		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations(UIApplication application, [Transient] UIWindow forWindow)
 		{
-
+			//MessagingCenter.Subscribe<WeekPlannerViewModel>(this, "forcePortrait", callback => 
+			//{
+			//	UIInterfaceOrientationMask.Portrait;
+			//});
 			return UIInterfaceOrientationMask.LandscapeRight;
 		}
 

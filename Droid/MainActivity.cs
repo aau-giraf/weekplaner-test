@@ -5,7 +5,7 @@ using Android.Content.PM;
 using Android.OS;
 using FFImageLoading.Forms.Droid;
 using Xamarin.Forms;
-using WeekPlanner.Views;
+using WeekPlanner.ViewModels;
 
 namespace WeekPlanner.Droid
 {
@@ -20,7 +20,7 @@ namespace WeekPlanner.Droid
 			base.OnCreate(bundle);
 
 			// Manages orientation for citizen weekplannerpage
-			MessagingCenter.Subscribe<WeekPlannerPage>(this, "forcePortrait", callback =>
+			MessagingCenter.Subscribe<WeekPlannerViewModel>(this, "forcePortrait", callback =>
 			{
 				RequestedOrientation = ScreenOrientation.Portrait;
 			});

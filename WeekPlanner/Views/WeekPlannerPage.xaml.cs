@@ -20,12 +20,12 @@ namespace WeekPlanner.Views
 		* This, however, is dependent on the not yet implemented user story regarding citizen orientation setting
 		* and should be set accordingly once this has been implemented. 
 		*/
-		protected override void OnAppearing()
-		{
-			base.OnAppearing();
+		//protected override void OnAppearing()
+		//{
+		//	base.OnAppearing();
 
 
-			MessagingCenter.Send(this, "forcePortrait");
-		}
+		//	MessagingCenter.Send(this, "forcePortrait");
+		//}
 	}
 }
