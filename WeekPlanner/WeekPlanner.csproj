@@ -25,8 +25,15 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Views\MyPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Update="Views\UserModeSwitchPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Views\MyPage.xaml.cs" />
+    <Compile Remove="Views\MyPage.xaml.cs" />
   </ItemGroup>
 </Project>

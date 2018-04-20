@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using IO.Swagger.Api;
 using IO.Swagger.Client;
 using IO.Swagger.Model;
@@ -46,7 +47,17 @@ namespace WeekPlanner.Services.Mocks
 
         public async Task<ResponseIEnumerableWeekNameDTO> V1WeekTemplateGetAsync()
         {
-            throw new System.NotImplementedException();
+            List<WeekNameDTO> dtos = new List<WeekNameDTO>{
+                new WeekNameDTO("Louise", 1),
+                new WeekNameDTO("Kasper", 2),
+                new WeekNameDTO("Teitur", 3)
+            };
+            return new ResponseIEnumerableWeekNameDTO
+            {
+                Data = dtos,
+                Success = true,
+                ErrorKey = ResponseIEnumerableWeekNameDTO.ErrorKeyEnum.NoError
+            };
         }
 
         public async Task<ApiResponse<ResponseIEnumerableWeekNameDTO>> V1WeekTemplateGetAsyncWithHttpInfo()

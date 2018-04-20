@@ -49,7 +49,6 @@ namespace WeekPlanner.ViewModels
             if (result.Success == true && result.Data.Count > 0)
             {
                 WeekNameDtos = result.Data;
-
             }
             else
             {
@@ -64,6 +63,5 @@ namespace WeekPlanner.ViewModels
         }
 
         public ICommand ChooseTemplateCommand => new Command<WeekNameDTO>(async dto => await NavigateToTemplate(dto));
-
     }
 }
