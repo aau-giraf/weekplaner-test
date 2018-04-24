@@ -19,11 +19,13 @@ namespace WeekPlanner.ViewModels
     {
         private readonly ISettingsService _settingsService;
         private readonly ILoginService _loginService;
+		private UserApi _userApi;
 
-        public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, ILoginService loginService) : base(navigationService)
+        public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, ILoginService loginService, UserApi userApi) : base(navigationService)
         {
             _settingsService = settingsService;
             _loginService = loginService;
+			_userApi = userApi;
         }
 
         public override async Task InitializeAsync(object navigationData)
