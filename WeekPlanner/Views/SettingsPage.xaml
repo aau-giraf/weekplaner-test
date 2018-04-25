@@ -38,6 +38,22 @@
                         <StackLayout BackgroundColor="#000" Grid.Column="1"> <!-- Dage farver -->
                         </StackLayout>
                         <StackLayout BackgroundColor="#000" Grid.Column="2"> <!-- Uge Dage -->
+                            <StackLayout BackgroundColor="#000" Grid.Column="2">
+                                <!-- Uge Dage -->
+                                <Switch></Switch>
+                                <Label Text="Antal af dage der vises af gangen"></Label>
+                                <Picker x:Name="NumberDayPicker" ItemsSource="{Binding NumberOfShownDaysAtOnce}" HorizontalOptions="FillAndExpand">
+                                    <Picker.Items>
+                                        <x:String>1</x:String>
+                                        <x:String>2</x:String>
+                                        <x:String>3</x:String>
+                                        <x:String>4</x:String>
+                                        <x:String>5</x:String>
+                                        <x:String>6</x:String>
+                                        <x:String>7</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                            </StackLayout>
                         </StackLayout>
                         <StackLayout BackgroundColor="#000" Grid.Column="3"> <!-- Orientering -->
                         </StackLayout>

@@ -41,5 +41,28 @@ namespace WeekPlanner.ViewModels
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
         }
+
+        private int _shownDays = 7;
+        public int NumberOfShownDaysAtOnce
+        {
+            get => _shownDays;
+            set
+            {
+                if (value < 1)
+                {
+                    _shownDays = 1;
+                }
+                else if (value > 7)
+                {
+                    _shownDays = 7;
+                }
+                else
+                {
+                    _shownDays = value;
+                }
+                _settingsService.UserOptions.AppGridSizeColumns = _shownDays;
+                RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
+            }
+        }
     }
 }
