@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -17,31 +18,55 @@ namespace WeekPlanner.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
+        private ObservableCollection<UserNameDTO> _usernamedto;
         private readonly ISettingsService _settingsService;
         private readonly ILoginService _loginService;
-		private UserApi _userApi;
+        private readonly IRequestService _requestService;
+        private readonly IDepartmentApi _departmentApi;
 
-        public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, ILoginService loginService, UserApi userApi) : base(navigationService)
+        public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, ILoginService loginService, IRequestService requestService, IDepartmentApi departmentApi) : base(navigationService)
         {
             _settingsService = settingsService;
             _loginService = loginService;
-			_userApi = userApi;
+            _requestService = requestService;
+
         }
+
+        //public ObservableCollection<UserNameDTO> userNameDTOs
+        //{
+        //    get => _usernamedto;
+        //    set
+        //    {
+        //        _usernamedto = value;
+        //        RaisePropertyChanged(() => _usernamedto);
+        //    }
+        //}
+
+        //private async Task SetDTO()
+        //{
+        //    await _requestService.SendRequestAndThenAsync(this,
+        //        requestAsync: async () => await _departmentApi.V1DepartmentByIdCitizensGetAsync
+        //        (_settingsService.Department.Id), onSuccess: result => _usernamedto
+        //        = new ObservableCollection<UserNameDTO>(result.Data));
+        //}
 
         public override async Task InitializeAsync(object navigationData)
         {
-            if (navigationData is UserNameDTO userNameDTO)
-            {
-                if(_settingsService.CitizenAuthToken == null && _settingsService.GuardianAuthToken == null)
-                {
-                    await _loginService.LoginAsync(UserType.Citizen,
-                    userNameDTO.UserName);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
-            }
+            //userNameDTOs = new ObservableCollection<UserNameDTO>();
+            //await _requestService.SendRequestAndThenAsync(this,
+            //    requestAsync: async () => await _departmentApi.V1DepartmentByIdCitizensGetAsync
+            //    (_settingsService.Department.Id), onSuccess: result => userNameDTOs
+            //    = new ObservableCollection<UserNameDTO>(result.Data));
+
+            //if (_settingsService.CitizenAuthToken == null && _settingsService.GuardianAuthToken == null)
+            //{
+                
+            //    await _loginService.LoginAsync(UserType.Citizen, )
+            //}
+            //else
+            //{
+            //    throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
+            //}
         }
     }
 }

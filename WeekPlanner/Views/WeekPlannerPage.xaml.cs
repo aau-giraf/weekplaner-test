@@ -15,26 +15,6 @@ namespace WeekPlanner.Views
 			InitializeComponent();
 		}
 
-		private async void Save_OnClicked(object sender, EventArgs e)
-		{
-			bool result = await DisplayAlert("Gem ugeplan", "Vil du gemme ugeplanen?", "Gem", "Annuller");
-			if (result)
-			{
-				MessagingCenter.Send(this, MessageKeys.ScheduleSaveRequest);
-			}
-		}
+    }
 
-		/*
-		* The following allows for specification of the orientation of the WeekPlannerPage. 
-		* This, however, is dependent on the not yet implemented user story regarding citizen orientation setting
-		* and should be set accordingly once this has been implemented. 
-		*/
-		//protected override void OnAppearing()
-		//{
-		//	base.OnAppearing();
-
-
-		//	MessagingCenter.Send(this, "forcePortrait");
-		//}
-	}
 }
