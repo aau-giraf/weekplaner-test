@@ -25,6 +25,7 @@ namespace WeekPlanner.ViewModels
         private readonly IRequestService _requestService;
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
+        private readonly ISettingsService _settingsService;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
@@ -61,13 +62,15 @@ namespace WeekPlanner.ViewModels
         }
 	    
         public WeekPlannerViewModel(INavigationService navigationService, ILoginService loginService, 
-            IRequestService requestService, IWeekApi weekApi, IDialogService dialogService) : base(navigationService)
+            IRequestService requestService, IWeekApi weekApi, IDialogService dialogService, ISettingsService settingsService) : base(navigationService)
         {
             _requestService = requestService;
             _weekApi = weekApi;
             _dialogService = dialogService;
+            _settingsService = settingsService;
             _loginService = loginService;
 
+            NumberOfDaysShown = _settingsService.UserOptions.AppGridSizeColumns ?? 0;
             UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
             
             MessagingCenter.Subscribe<PictogramSearchViewModel, PictogramDTO>(this, MessageKeys.PictoSearchChosenItem,
@@ -263,8 +266,9 @@ namespace WeekPlanner.ViewModels
 		}
 	    #endregion
 
+        public int NumberOfDaysShown { get; }
 
-		#region Boilerplate for each weekday's pictos
+        #region Boilerplate for each weekday's pictos
 
 		private Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> _weekdayPictos =
 			new Dictionary<DayEnum, ObservableCollection<StatefulPictogram>>();

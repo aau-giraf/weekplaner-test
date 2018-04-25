@@ -73,7 +73,7 @@
                 <Label Text="Lørdag" Grid.Column="5" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
                 <Label Text="Søndag" Grid.Column="6" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
                 <!-- WEEKDAY LISTS -->
-                <ScrollView Grid.Row="1" Grid.ColumnSpan="7">
+                <ScrollView Grid.Row="1" Grid.ColumnSpan="{Binding NumberOfDaysShown}">
                     <!-- HACK: The HeightRequest is set to make the Grid's height larger
                 than the ListViews height in effect disabling their scrolling, so all days scroll together -->
                     <Grid HeightRequest="1500">
