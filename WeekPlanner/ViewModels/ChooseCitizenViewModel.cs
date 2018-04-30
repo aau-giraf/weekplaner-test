@@ -42,7 +42,6 @@ namespace WeekPlanner.ViewModels
 	    private async Task UseDepartmentTokenAndNavigateToWeekPlan(UserNameDTO usernameDTO)
 	    {
 		    _settingsService.UseTokenFor(UserType.Guardian);
-	        //_settingsService.UserOptions = new LauncherOptions() { AppGridSizeColumns = 7 };
             await NavigationService.NavigateToAsync<WeekPlannerViewModel>(usernameDTO);
 	    }
 
