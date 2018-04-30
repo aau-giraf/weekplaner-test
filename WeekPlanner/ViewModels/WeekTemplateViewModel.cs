@@ -56,7 +56,6 @@ namespace WeekPlanner.ViewModels
             }
         }
 
-        //Hvordan gemmes det i en bestemt uge?
         private async Task NavigateToTemplate(WeekNameDTO dto)
         {
             await NavigationService.NavigateToAsync<WeekPlannerViewModel>(dto);

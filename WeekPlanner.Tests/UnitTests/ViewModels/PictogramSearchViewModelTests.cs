@@ -39,7 +39,6 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
         [Fact]
         public void ItemTappedCommand_Executed_InvokesNavigationPop()
         {
-            
             // Arrange
             var navServiceMock = Fixture.Freeze<Mock<INavigationService>>();
             var pictogramDTO = Fixture.Create<PictogramDTO>();
