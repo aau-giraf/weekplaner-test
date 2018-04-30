@@ -268,10 +268,66 @@ namespace WeekPlanner.ViewModels
 	    #endregion
 
         public int NumberOfDaysShown { get; }
+        public int RemainingDaysShown
+        {
+            get {
+
+                // Find the current day in WeekDTO object.
+                DateTimeConverter dateTimeConverter = new DateTimeConverter();
+                DayEnum currentDay = dateTimeConverter.GetWeekDay(DateTime.Today.DayOfWeek);
+                if ((int)currentDay + NumberOfDaysShown > 7)
+                {
+                    return NumberOfDaysShown - ((NumberOfDaysShown + (int)currentDay) - 7);
+                }
+
+                return NumberOfDaysShown;
+            }
+        }
+
+
+        public bool IsDayShown(DayEnum day)
+        {
+            // Find the current day in WeekDTO object.
+            DateTimeConverter dateTimeConverter = new DateTimeConverter();
+            DayEnum currentDay = dateTimeConverter.GetWeekDay(DateTime.Today.DayOfWeek);
+            if (day < currentDay)
+            {
+                return false;
+            }
+            return currentDay + NumberOfDaysShown > day;
+        }
+        public bool IsMondayShown => IsDayShown(DayEnum.Monday);
+        public bool IsTuesdayShown => IsDayShown(DayEnum.Tuesday);
+        public bool IsWednesdayShown => IsDayShown(DayEnum.Wednesday);
+        public bool IsThursdayShown => IsDayShown(DayEnum.Thursday);
+        public bool IsFridayShown => IsDayShown(DayEnum.Friday);
+        public bool IsSaturdayShown => IsDayShown(DayEnum.Saturday);
+        public bool IsSundayShown => IsDayShown(DayEnum.Sunday);
+
+        public int GetDayColumn(DayEnum day)
+        {
+            // Find the current day in WeekDTO object.
+            DateTimeConverter dateTimeConverter = new DateTimeConverter();
+            DayEnum currentDay = dateTimeConverter.GetWeekDay(DateTime.Today.DayOfWeek);
+
+            
+            if (currentDay + NumberOfDaysShown <= day || currentDay > day)
+            {
+                return 0;
+            }
+            return day - currentDay;
+        }
+        public int MondayColumnInt => GetDayColumn(DayEnum.Monday);
+        public int TuesdayColumnInt => GetDayColumn(DayEnum.Tuesday);
+        public int WednesdayColumnInt => GetDayColumn(DayEnum.Wednesday);
+        public int ThursdayColumnInt => GetDayColumn(DayEnum.Thursday);
+        public int FridayColumnInt => GetDayColumn(DayEnum.Friday);
+        public int SaturdayColumnInt => GetDayColumn(DayEnum.Saturday);
+        public int SundayColumnInt => GetDayColumn(DayEnum.Sunday);
 
         #region Boilerplate for each weekday's pictos
 
-		private Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> _weekdayPictos =
+        private Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> _weekdayPictos =
 			new Dictionary<DayEnum, ObservableCollection<StatefulPictogram>>();
 
         private int _numberofactivitiesshown;

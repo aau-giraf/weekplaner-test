@@ -52,38 +52,32 @@
                 </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <!-- REMOVED COLUMNDEFINITIONS SINCE THEY RESTRICTED THE NUMBER OF COLUMNS SHOWN TO A CONSTANT NUMBER -->
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="AUTO" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <!-- DAYS TITLEBAR -->
-                <Label Text="Mandag" Grid.Column="0" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Tirsdag" Grid.Column="1" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Onsdag" Grid.Column="2" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Torsdag" Grid.Column="3" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Fredag" Grid.Column="4" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Lørdag" Grid.Column="5" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
-                <Label Text="Søndag" Grid.Column="6" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" />
+                <Label Text="Mandag" Grid.Column="{Binding MondayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsMondayShown}" />
+                <Label Text="Tirsdag" Grid.Column="{Binding TuesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsTuesdayShown}" />
+                <Label Text="Onsdag" Grid.Column="{Binding WednesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsWednesdayShown}" />
+                <Label Text="Torsdag" Grid.Column="{Binding ThursdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsThursdayShown}" />
+                <Label Text="Fredag" Grid.Column="{Binding FridayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsFridayShown}" />
+                <Label Text="Lørdag" Grid.Column="{Binding SaturdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSaturdayShown}" />
+                <Label Text="Søndag" Grid.Column="{Binding SundayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSundayShown}" />
                 <!-- WEEKDAY LISTS -->
-                <ScrollView Grid.Row="1" Grid.ColumnSpan="{Binding NumberOfDaysShown}">
+                <ScrollView Grid.Row="1" Grid.ColumnSpan="{Binding RemainingDaysShown}">
                     <!-- HACK: The HeightRequest is set to make the Grid's height larger
                 than the ListViews height in effect disabling their scrolling, so all days scroll together -->
                     <Grid HeightRequest="1500">
-                        <controls:WeekDayListView BackgroundColor="{StaticResource MondayColor}" ItemsSource="{Binding MondayPictos}" Grid.Column="0" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource TuesdayColor}" ItemsSource="{Binding TuesdayPictos}" Grid.Column="1" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource WednesdayColor}" ItemsSource="{Binding WednesdayPictos}" Grid.Column="2" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource ThursdayColor}" ItemsSource="{Binding ThursdayPictos}" Grid.Column="3" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource FridayColor}" ItemsSource="{Binding FridayPictos}" Grid.Column="4" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource SaturdayColor}" ItemsSource="{Binding SaturdayPictos}" Grid.Column="5" />
-                        <controls:WeekDayListView BackgroundColor="{StaticResource SundayColor}" ItemsSource="{Binding SundayPictos}" Grid.Column="6" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource MondayColor}" ItemsSource="{Binding MondayPictos}" Grid.Column="{Binding MondayColumnInt}" IsVisible="{Binding IsMondayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource TuesdayColor}" ItemsSource="{Binding TuesdayPictos}" Grid.Column="{Binding TuesdayColumnInt}" IsVisible="{Binding IsTuesdayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource WednesdayColor}" ItemsSource="{Binding WednesdayPictos}" Grid.Column="{Binding WednesdayColumnInt}" IsVisible="{Binding IsWednesdayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource ThursdayColor}" ItemsSource="{Binding ThursdayPictos}" Grid.Column="{Binding ThursdayColumnInt}" IsVisible="{Binding IsThursdayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource FridayColor}" ItemsSource="{Binding FridayPictos}" Grid.Column="{Binding FridayColumnInt}" IsVisible="{Binding IsFridayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource SaturdayColor}" ItemsSource="{Binding SaturdayPictos}" Grid.Column="{Binding SaturdayColumnInt}" IsVisible="{Binding IsSaturdayShown}" />
+                        <controls:WeekDayListView BackgroundColor="{StaticResource SundayColor}" ItemsSource="{Binding SundayPictos}" Grid.Column="{Binding SundayColumnInt}" IsVisible="{Binding IsSundayShown}" />
                     </Grid>
                 </ScrollView>
             </Grid>

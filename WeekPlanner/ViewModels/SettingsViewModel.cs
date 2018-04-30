@@ -66,7 +66,6 @@ namespace WeekPlanner.ViewModels
                 RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
             }
         }
-
         private int _activitiesshown;
         public string Activitiesshown
         {

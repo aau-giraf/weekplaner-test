@@ -20,6 +20,7 @@ namespace WeekPlanner.Services.Settings
         public SettingsService(IAccountApi accountApi)
         {
             _accountApi = accountApi;
+            UserOptions = new LauncherOptions() { AppGridSizeColumns = 7 };
         }
         
         public bool UseMocks
@@ -46,11 +47,7 @@ namespace WeekPlanner.Services.Settings
             set => GlobalSettings.Instance.CitizenAuthToken = value;
         }
 
-        public LauncherOptions UserOptions
-        {
-            get;
-            set;
-        }
+        public LauncherOptions UserOptions { get; set; }
 
         /// <summary>
         /// Sets the API up to using the specified type of authentication token.
