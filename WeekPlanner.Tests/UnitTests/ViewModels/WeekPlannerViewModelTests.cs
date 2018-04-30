@@ -31,7 +31,7 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
         [InlineData("FridayPictos")]
         [InlineData("SaturdayPictos")]
         [InlineData("SundayPictos")]
-        [InlineData("SundayPictos")]
+        [InlineData("WeekdayPictos")]
         [InlineData("CountOfMaxHeightWeekday")]
         public void WeekdayPictos_OnSet_RaisesPropertiesChanged(string property)
         {

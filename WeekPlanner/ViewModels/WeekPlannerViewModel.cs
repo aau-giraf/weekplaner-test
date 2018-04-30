@@ -276,11 +276,15 @@ namespace WeekPlanner.ViewModels
 
         private int _numberofactivitiesshown;
 
+        public Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> Shownactivities => WeekdayPictos.Select(pair =>
+                new KeyValuePair<DayEnum, ObservableCollection<StatefulPictogram>>
+                    (pair.Key, new ObservableCollection<StatefulPictogram>(pair.Value.Take(_numberofactivitiesshown))))
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+
         public Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> WeekdayPictos
-		{
-			get => _weekdayPictos.Select(pair =>
-			        new KeyValuePair<DayEnum, ObservableCollection<StatefulPictogram>>(pair.Key, new ObservableCollection<StatefulPictogram>(pair.Value.Take(_numberofactivitiesshown))))
-			    .ToDictionary(pair => pair.Key, pair => pair.Value);
+        {
+            get => _weekdayPictos;
             set
 			{
 				_weekdayPictos = value;
@@ -318,7 +322,7 @@ namespace WeekPlanner.ViewModels
 
 		private ObservableCollection<StatefulPictogram> GetPictosOrEmptyList(DayEnum day)
 		{
-			if (!WeekdayPictos.TryGetValue(day, out var pictoSources))
+			if (!Shownactivities.TryGetValue(day, out var pictoSources))
 				pictoSources = new ObservableCollection<StatefulPictogram>();
 			return new ObservableCollection<StatefulPictogram>(pictoSources);
 		}
