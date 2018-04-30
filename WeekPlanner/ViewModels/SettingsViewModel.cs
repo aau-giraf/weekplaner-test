@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IO.Swagger.Api;
@@ -12,6 +13,7 @@ using WeekPlanner.Services.Request;
 using WeekPlanner.Services.Settings;
 using WeekPlanner.Validations;
 using WeekPlanner.ViewModels.Base;
+using Xamarin.Forms;
 
 namespace WeekPlanner.ViewModels
 {
@@ -62,6 +64,34 @@ namespace WeekPlanner.ViewModels
                 }
                 _settingsService.UserOptions.AppGridSizeColumns = _shownDays;
                 RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
+            }
+        }
+
+        private int _activitiesshown;
+        public string Activitiesshown
+        {
+            get => _activitiesshown.ToString();
+            set
+            {
+                string pat = @"/\d/g";
+                if (Regex.IsMatch(value, pat, RegexOptions.IgnoreCase))
+                {
+                    int.TryParse(value, out int temp);
+                    if (temp < 1)
+                    {
+                        _activitiesshown = 1;
+                    }
+                    else
+                    {
+                        _activitiesshown = temp;
+                    }
+                    _settingsService.UserOptions.ActivitiesCount = _activitiesshown;
+                    RaisePropertyChanged(() => Activitiesshown);
+                }
+                else
+                {
+                    MessagingCenter.Send(this, "Bogstaver og specialtegn genkendes ikke, indtast venligst et tal");
+                }
             }
         }
     }

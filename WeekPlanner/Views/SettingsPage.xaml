@@ -57,7 +57,8 @@
                         </StackLayout>
                         <StackLayout BackgroundColor="#000" Grid.Column="3"> <!-- Orientering -->
                         </StackLayout>
-                        <StackLayout BackgroundColor="#000" Grid.Column="4"> <!-- Viste Aktiviteter -->
+                        <StackLayout BackgroundColor="#000" Grid.Column="4">
+                            <Entry Placeholder="Indtast antal aktiviteter" Text="{Binding Activitiesshown}"></Entry> <!-- Viste Aktiviteter -->
                         </StackLayout>
                         <StackLayout BackgroundColor="#000" Grid.Column="5"> <!-- Udført Tegn -->
                         </StackLayout>

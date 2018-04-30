@@ -72,7 +72,8 @@ namespace WeekPlanner.ViewModels
 
             NumberOfDaysShown = _settingsService.UserOptions.AppGridSizeColumns ?? 0;
             UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
-            
+            _numberofactivitiesshown = _settingsService.UserOptions.ActivitiesCount ?? 0;
+
             MessagingCenter.Subscribe<PictogramSearchViewModel, PictogramDTO>(this, MessageKeys.PictoSearchChosenItem,
                 InsertPicto);
             MessagingCenter.Subscribe<ActivityViewModel, int>(this, MessageKeys.DeleteActivity,
@@ -273,10 +274,14 @@ namespace WeekPlanner.ViewModels
 		private Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> _weekdayPictos =
 			new Dictionary<DayEnum, ObservableCollection<StatefulPictogram>>();
 
-		public Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> WeekdayPictos
+        private int _numberofactivitiesshown;
+
+        public Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> WeekdayPictos
 		{
-			get => _weekdayPictos;
-			set
+			get => _weekdayPictos.Select(pair =>
+			        new KeyValuePair<DayEnum, ObservableCollection<StatefulPictogram>>(pair.Key, new ObservableCollection<StatefulPictogram>(pair.Value.Take(_numberofactivitiesshown))))
+			    .ToDictionary(pair => pair.Key, pair => pair.Value);
+            set
 			{
 				_weekdayPictos = value;
 				SetBorderStatusPictograms(DateTime.Today.DayOfWeek);
