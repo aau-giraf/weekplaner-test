@@ -133,7 +133,6 @@ namespace WeekPlanner.ViewModels
 
 			// Set all the other settings here.
 		}
-	}
         private int _shownDays = 7;
         public int NumberOfShownDaysAtOnce
         {
@@ -175,13 +174,13 @@ namespace WeekPlanner.ViewModels
                         _activitiesshown = temp;
                     }
                     _settingsService.UserOptions.ActivitiesCount = _activitiesshown;
-    }
-        }
-            }
-                }
-                {
-                else
-                }
                     RaisePropertyChanged(() => Activitiesshown);
+                }
+                else
+                {
                     MessagingCenter.Send(this, "Bogstaver og specialtegn genkendes ikke, indtast venligst et tal");
+                }
+            }
+        }
+    }
 }
