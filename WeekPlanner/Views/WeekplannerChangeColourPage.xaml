@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+			 x:Class="WeekPlanner.WeekplannerChangeColourPage"
+			 xmlns:base1="clr-namespace:WeekPlanner.ViewModels.Base;assembly=WeekPlanner"
+		     base1:ViewModelLocator.AutoWireViewModel="true"
+    		 Title="Ugeplanlægger Farve Indstillinger">
+	<ContentPage.Content>
+		<StackLayout>
+			<Label Text="Label!" />
+		</StackLayout>
+	</ContentPage.Content>
+</ContentPage>

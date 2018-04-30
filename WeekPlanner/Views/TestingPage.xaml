@@ -30,6 +30,9 @@
                 <Button
                     Text="Indstillinger"
                     Command="{Binding NavigateToSettingsCommand}" />
+				<Button
+                    Text="Ugeplanlægger indstillinger"
+                    Command="{Binding NavigateToWeekplannerChangeColourCommand}" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
