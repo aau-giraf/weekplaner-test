@@ -17,5 +17,9 @@ namespace WeekPlanner.Views
 			DisplayAlert("Hey", "Med", "Dig");
 		}
 
-	}
+        private void DaysPicker_OnSelectedIndexChanged(object sender, EventArgs e)
+        {
+            DisplayAlert("Settings", "Antal af dage er blevet ændret", "Ok");
+        }
+    }
 }

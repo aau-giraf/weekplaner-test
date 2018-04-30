@@ -70,9 +70,7 @@ namespace WeekPlanner.ViewModels
             _settingsService = settingsService;
             _loginService = loginService;
 
-            NumberOfDaysShown = _settingsService.UserOptions.AppGridSizeColumns ?? 0;
             UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
-            _numberofactivitiesshown = _settingsService.UserOptions.ActivitiesCount ?? 0;
 
             MessagingCenter.Subscribe<PictogramSearchViewModel, PictogramDTO>(this, MessageKeys.PictoSearchChosenItem,
                 InsertPicto);
@@ -277,7 +275,7 @@ namespace WeekPlanner.ViewModels
                 DayEnum currentDay = dateTimeConverter.GetWeekDay(DateTime.Today.DayOfWeek);
                 if ((int)currentDay + NumberOfDaysShown > 7)
                 {
-                    return NumberOfDaysShown - ((NumberOfDaysShown + (int)currentDay) - 7);
+                    return NumberOfDaysShown - (NumberOfDaysShown + (int)currentDay - 7);
                 }
 
                 return NumberOfDaysShown;

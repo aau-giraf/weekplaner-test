@@ -130,8 +130,8 @@ namespace WeekPlanner.ViewModels
 		private void SetSettings(ResponseLauncherOptionsDTO result)
 		{
 			OrientationSetting = result.Data.Orientation;
-
-			// Set all the other settings here.
+		    NumberOfShownDaysAtOnce = result.Data.AppGridSizeColumns ?? 7;
+		    // Set all the other settings here.
 		}
         private int _shownDays = 7;
         public int NumberOfShownDaysAtOnce
@@ -151,7 +151,6 @@ namespace WeekPlanner.ViewModels
                 {
                     _shownDays = value;
                 }
-                _settingsService.UserOptions.AppGridSizeColumns = _shownDays;
                 RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
             }
         }
@@ -173,7 +172,6 @@ namespace WeekPlanner.ViewModels
                     {
                         _activitiesshown = temp;
                     }
-                    _settingsService.UserOptions.ActivitiesCount = _activitiesshown;
                     RaisePropertyChanged(() => Activitiesshown);
                 }
                 else

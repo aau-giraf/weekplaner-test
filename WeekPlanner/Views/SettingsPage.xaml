@@ -12,7 +12,24 @@
                 <!--Number of activity-->
                 
                 <!--Number of days shown-->
-                
+                <TableSection Title="Dage vist af gangen">
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Padding="15,0">
+                            <Label Text="Antal dage vist af gangen" VerticalOptions="Center"></Label>
+                            <Picker HorizontalOptions="EndAndExpand" SelectedIndexChanged="DaysPicker_OnSelectedIndexChanged" SelectedItem="{Binding NumberOfShownDaysAtOnce}">
+                                <Picker.Items>
+                                    <x:String>1</x:String>
+                                    <x:String>2</x:String>
+                                    <x:String>3</x:String>
+                                    <x:String>4</x:String>
+                                    <x:String>5</x:String>
+                                    <x:String>6</x:String>
+                                    <x:String>7</x:String>
+                                </Picker.Items>
+                            </Picker>
+                        </StackLayout>
+                    </ViewCell>
+                </TableSection>
                 <!--Different completion mark-->
 
                 <!--Orientation lock-->

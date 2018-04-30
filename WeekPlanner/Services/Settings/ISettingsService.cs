@@ -7,7 +7,6 @@ namespace WeekPlanner.Services.Settings
         bool UseMocks { get; set; }
         string GuardianAuthToken { get; set; }
         string CitizenAuthToken { get; set; }
-        LauncherOptions UserOptions { get; set; }
 
         void UseTokenFor(UserType userType);
 
