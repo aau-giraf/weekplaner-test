@@ -23,7 +23,6 @@ namespace WeekPlanner.ApplicationObjects
 		{
 			// *** Constant Registrations ***
 			// ViewModels
-			cb.RegisterType<WeekplannerChangeColourViewModel>();
 
 			cb.RegisterType<ChooseCitizenViewModel>();
 			cb.RegisterType<LoginViewModel>();
@@ -31,8 +30,8 @@ namespace WeekPlanner.ApplicationObjects
 			cb.RegisterType<WeekPlannerViewModel>();
 			cb.RegisterType<ChooseTemplateViewModel>();
 			cb.RegisterType<PictogramSearchViewModel>();
-			cb.RegisterType<PictogramSearchViewModel>();
 			cb.RegisterType<ActivityViewModel>();
+			cb.RegisterType<WeekplannerChangeColourViewModel>();
 
 
 			// Services
