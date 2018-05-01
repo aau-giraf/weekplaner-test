@@ -46,6 +46,10 @@ namespace WeekPlanner.Services.Settings
             set => GlobalSettings.Instance.CitizenAuthToken = value;
         }
 
+        public async Task UpdateSettings(LauncherOptionsDTO launcherOptionsDto)
+        {
+        }
+
         /// <summary>
         /// Sets the API up to using the specified type of authentication token.
         /// </summary>

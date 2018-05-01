@@ -16,8 +16,13 @@ namespace WeekPlanner.ViewModels
 {
 	public class WeekplannerChangeColourViewModel : ViewModelBase
 	{
-		public WeekplannerChangeColourViewModel(INavigationService navigationService) : base(navigationService)
+		private readonly INavigationService _navigationService;
+		private readonly ISettingsService _settingsService;
+
+		public WeekplannerChangeColourViewModel(INavigationService navigationService, ISettingsService settingsService) : base(navigationService)
 		{
+			_navigationService = navigationService;
+			_settingsService = settingsService;
 		}
 	}
 }
