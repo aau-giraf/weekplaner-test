@@ -25,7 +25,7 @@ namespace WeekPlanner.ViewModels
         private readonly IRequestService _requestService;
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
-        private readonly ISettingsService _settingsService;
+        private readonly IUserApi _userApi;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
@@ -62,12 +62,12 @@ namespace WeekPlanner.ViewModels
         }
 	    
         public WeekPlannerViewModel(INavigationService navigationService, ILoginService loginService, 
-            IRequestService requestService, IWeekApi weekApi, IDialogService dialogService, ISettingsService settingsService) : base(navigationService)
+            IRequestService requestService, IWeekApi weekApi, IDialogService dialogService, IUserApi userApi) : base(navigationService)
         {
             _requestService = requestService;
             _weekApi = weekApi;
             _dialogService = dialogService;
-            _settingsService = settingsService;
+            _userApi = userApi;
             _loginService = loginService;
 
             UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
@@ -263,13 +263,13 @@ namespace WeekPlanner.ViewModels
 
 			WeekdayPictos = tempDict;
 		}
-	    #endregion
+        #endregion
 
-        public int NumberOfDaysShown { get; }
+        public ResponseLauncherOptionsDTO ResponseLauncherOptionsDto => _userApi.V1UserSettingsGet();
+        public int NumberOfDaysShown => ResponseLauncherOptionsDto.Data.AppGridSizeColumns ?? 7;
         public int RemainingDaysShown
         {
             get {
-
                 // Find the current day in WeekDTO object.
                 DateTimeConverter dateTimeConverter = new DateTimeConverter();
                 DayEnum currentDay = dateTimeConverter.GetWeekDay(DateTime.Today.DayOfWeek);
