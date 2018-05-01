@@ -7,7 +7,15 @@
     		 Title="Ugeplanlægger Farve Indstillinger">
 	<ContentPage.Content>
 		<StackLayout>
-			<Label Text="Label!" />
+			<ListView>
+				<Frame></Frame>
+				<Frame></Frame>
+				<Frame></Frame>
+				<Frame></Frame>
+				<Frame></Frame>
+				<Frame></Frame>
+				<Frame></Frame>
+			</ListView>
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
