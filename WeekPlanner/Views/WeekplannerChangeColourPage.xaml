@@ -7,15 +7,20 @@
     		 Title="Ugeplanlægger Farve Indstillinger">
 	<ContentPage.Content>
 		<StackLayout>
-			<ListView>
-				<Frame></Frame>
-				<Frame></Frame>
-				<Frame></Frame>
-				<Frame></Frame>
-				<Frame></Frame>
-				<Frame></Frame>
-				<Frame></Frame>
-			</ListView>
+			<Frame BackgroundColor="Blue">
+				<Frame BackgroundColor="Fuchsia" HorizontalOptions="FillAndExpand" MinimumWidthRequest="10" HeightRequest="20">
+					<Frame BackgroundColor="Red">
+						<Label Text="M" />
+					</Frame>
+					<Frame BackgroundColor="Black" />
+					<Frame BackgroundColor="Red" />
+					<Frame BackgroundColor="Black" />
+					<Frame BackgroundColor="Red" />
+					<Frame BackgroundColor="Black" />
+					<Frame BackgroundColor="Red" />
+				</Frame>
+				<Label Text = "Blå!" />
+			</Frame>
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
