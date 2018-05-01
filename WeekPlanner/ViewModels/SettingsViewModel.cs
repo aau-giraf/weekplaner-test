@@ -132,6 +132,7 @@ namespace WeekPlanner.ViewModels
 			OrientationSetting = result.Data.Orientation;
 		    NumberOfShownDaysAtOnce = result.Data.AppGridSizeColumns ?? 7;
 		    // Set all the other settings here.
+		    ActivitiesShown = result.Data.ActivitiesCount.ToString();
 		}
         private int _shownDays = 7;
         public int NumberOfShownDaysAtOnce
@@ -155,7 +156,7 @@ namespace WeekPlanner.ViewModels
             }
         }
         private int _activitiesshown;
-        public string Activitiesshown
+        public string ActivitiesShown
         {
             get => _activitiesshown.ToString();
             set
@@ -172,11 +173,11 @@ namespace WeekPlanner.ViewModels
                     {
                         _activitiesshown = temp;
                     }
-                    RaisePropertyChanged(() => Activitiesshown);
+                    RaisePropertyChanged(() => ActivitiesShown);
                 }
                 else
                 {
-                    MessagingCenter.Send(this, "Bogstaver og specialtegn genkendes ikke, indtast venligst et tal");
+                    _activitiesshown = 30;
                 }
             }
         }

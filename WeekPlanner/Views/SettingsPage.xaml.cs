@@ -21,5 +21,9 @@ namespace WeekPlanner.Views
         {
             DisplayAlert("Settings", "Antal af dage er blevet ændret", "Ok");
         }
+        private void Picker_SelectedIndexChangedActivity(object sender, EventArgs e)
+        {
+            DisplayAlert("Indstillinger", $"Antal viste aktiviteter er blevet sat", "OK");
+        }
     }
 }
