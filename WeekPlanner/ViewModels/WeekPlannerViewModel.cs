@@ -328,11 +328,11 @@ namespace WeekPlanner.ViewModels
         private Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> _weekdayPictos =
 			new Dictionary<DayEnum, ObservableCollection<StatefulPictogram>>();
 
-        private int _numberofactivitiesshown;
+        public int NumberOfActivitiesshown => ResponseLauncherOptionsDto.Data.ActivitiesCount ?? 30;
 
         public Dictionary<DayEnum, ObservableCollection<StatefulPictogram>> Shownactivities => WeekdayPictos.Select(pair =>
                 new KeyValuePair<DayEnum, ObservableCollection<StatefulPictogram>>
-                    (pair.Key, new ObservableCollection<StatefulPictogram>(pair.Value.Take(_numberofactivitiesshown))))
+                    (pair.Key, new ObservableCollection<StatefulPictogram>(pair.Value.Take(NumberOfActivitiesshown))))
             .ToDictionary(pair => pair.Key, pair => pair.Value);
 
 
