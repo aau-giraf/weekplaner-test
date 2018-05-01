@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using IO.Swagger.Client;
 using IO.Swagger.Model;
 using Moq;
 using WeekPlanner.Services.Request;
@@ -19,7 +21,7 @@ namespace WeekPlanner.Tests.UnitTests.Base
         /// </summary>
         /// <typeparam name="TS">Type of the sender, typically viewmodel</typeparam>
         /// <typeparam name="TR">Type of the response, for example ResponseWeekDTO</typeparam>
-        public void FreezeMockOfIRequestService<TS,TR>() where TS : class where TR : class
+        public void FreezeMockOfIRequestService<TS, TR>() where TS : class where TR : class
         {
             Func<TS, Func<Task<TR>>, Func<TR, Task>, Func<Task>, Func<Task>,
                     string, string, Task>
@@ -27,8 +29,24 @@ namespace WeekPlanner.Tests.UnitTests.Base
                     async (sender, requestAsync, onSuccessAsync, onExceptionAsync, onRequestFailedAsync,
                         exceptionMessage, requestFailedMessage) =>
                     {
-                        var res = await requestAsync.Invoke();
-                        await onSuccessAsync(res);
+                        dynamic res;
+                        try
+                        {
+                            res = await requestAsync.Invoke();
+                        }
+                        catch (ApiException)
+                        {
+                            await onExceptionAsync();
+                            return;
+                        }
+
+                        if (res.Success == true)
+                        {
+                            await onSuccessAsync(res);
+                            return;
+                        }
+
+                        await onRequestFailedAsync();
                     };
             var mockRequest = Fixture.Freeze<Mock<IRequestService>>().Setup(r =>
                     r.SendRequestAndThenAsync(It.IsAny<TS>(), It.IsAny<Func<Task<TR>>>(),
@@ -36,10 +54,11 @@ namespace WeekPlanner.Tests.UnitTests.Base
                         It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(sendRequestAndThenAsyncMock);
         }
+
         protected TestsBase()
         {
             Fixture = new Fixture().Customize(new AutoMoqCustomization());
-            
+
             // Limits the recursion depth when generating objects, so we use it for ResponseGirafUserDTO
             Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                 .ForEach(b => Fixture.Behaviors.Remove(b));

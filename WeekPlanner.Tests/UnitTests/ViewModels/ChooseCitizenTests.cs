@@ -41,15 +41,17 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
         [Fact]
         public async void CitizenNamesProperty_AfterInitializationWithValidArguments_IsNotNull()
         {
+            FreezeMockOfIRequestService<ChooseCitizenViewModel, ResponseListUserNameDTO>();
+            
             // Arrange
             var response = Fixture.Build<ResponseListUserNameDTO>()
                 .With(r => r.Data, Fixture.Create<List<UserNameDTO>>())
                 .With(r => r.Success, true)
                 .With(r => r.ErrorKey, ResponseListUserNameDTO.ErrorKeyEnum.NoError)
                 .Create();
-            
-            var departmentApiMock = Fixture.Freeze<Mock<IDepartmentApi>>();
-            departmentApiMock.Setup(d => d.V1DepartmentByIdCitizensGetAsync(It.IsAny<long?>()))
+
+            var departmentApiMock = Fixture.Freeze<Mock<IDepartmentApi>>()
+                .Setup(d => d.V1DepartmentByIdCitizensGetAsync(It.IsAny<long?>()))
                 .ReturnsAsync(response);
 
             var sut = Fixture.Build<ChooseCitizenViewModel>()

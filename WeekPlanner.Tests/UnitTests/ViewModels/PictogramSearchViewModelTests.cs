@@ -42,6 +42,7 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
             var navServiceMock = Fixture.Freeze<Mock<INavigationService>>();
             var pictogramDTO = Fixture.Create<PictogramDTO>();
             var sut = Fixture.Create<PictogramSearchViewModel>();
+            sut.ImageSources.Add(pictogramDTO);
             
             // Act
             sut.ItemTappedCommand.Execute(pictogramDTO);
@@ -90,17 +91,17 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
         }
 
         [Fact] 
-        public void OnSearchGetPictograms_ThrowsExecption_NoImages()
+        public void ImageSources_AfterApiException_IsNull()
         {
+            FreezeMockOfIRequestService<PictogramSearchViewModel, ResponseListPictogramDTO>();
             var api = Fixture.Freeze<Mock<IPictogramApi>>()
-                .Setup(a => a.V1PictogramGet(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>()))
+                .Setup(a => a.V1PictogramGetAsync(It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>()))
                 .Throws<ApiException>();
-            var SystemUnderTest = Fixture.Create<PictogramSearchViewModel>();             
-            //var PictogramDTO = Fixture.Create<PictogramDTO>();             
+            var SystemUnderTest = Fixture.Build<PictogramSearchViewModel>().OmitAutoProperties().Create();                   
             // Act             
-            SystemUnderTest.OnSearchGetPictograms("kat");             
+            SystemUnderTest.OnSearchGetPictograms("kat");
             // Assert             
-            Assert.Equal(0, SystemUnderTest.ImageSources.Count);
+            Assert.Null(SystemUnderTest.ImageSources);
         }
     }
 }
