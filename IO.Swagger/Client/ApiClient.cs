@@ -131,7 +131,6 @@ namespace IO.Swagger.Client
             foreach(var param in formParams)
                 request.AddParameter(param.Key, param.Value);
 
-
             if (postBody != null) // http body (model or byte[]) parameter
             {
                 request.AddParameter(contentType, postBody, ParameterType.RequestBody);

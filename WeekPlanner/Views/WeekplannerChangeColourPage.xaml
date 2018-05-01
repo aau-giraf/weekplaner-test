@@ -8,16 +8,7 @@
 	<ContentPage.Content>
 		<StackLayout>
 			<Frame BackgroundColor="Blue">
-				<Frame BackgroundColor="Fuchsia" HorizontalOptions="FillAndExpand" MinimumWidthRequest="10" HeightRequest="20">
-					<Frame BackgroundColor="Red">
-						<Label Text="M" />
-					</Frame>
-					<Frame BackgroundColor="Black" />
-					<Frame BackgroundColor="Red" />
-					<Frame BackgroundColor="Black" />
-					<Frame BackgroundColor="Red" />
-					<Frame BackgroundColor="Black" />
-					<Frame BackgroundColor="Red" />
+				<Frame BackgroundColor="Fuchsia" HorizontalOptions="FillAndExpand" WidthRequest="10" HeightRequest="20">
 				</Frame>
 				<Label Text = "Blå!" />
 			</Frame>
