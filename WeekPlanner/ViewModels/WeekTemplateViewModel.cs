@@ -8,6 +8,8 @@ using WeekPlanner.Services.Navigation;
 using WeekPlanner.ViewModels.Base;
 using System.Windows.Input;
 using Xamarin.Forms;
+using WeekPlanner.Helpers;
+using System.Collections.ObjectModel;
 
 namespace WeekPlanner.ViewModels
 {
@@ -42,7 +44,8 @@ namespace WeekPlanner.ViewModels
             }
             catch (ApiException)
             {
-                //fail
+                var friendlyErrorMessage = ErrorCodeHelper.ToFriendlyString(ResponseString.ErrorKeyEnum.Error);
+                MessagingCenter.Send(this, MessageKeys.WeekTemplatesNotFound, friendlyErrorMessage);
                 return;
             }
 
@@ -52,7 +55,7 @@ namespace WeekPlanner.ViewModels
             }
             else
             {
-                //send besked om at der ikke kan findes noget data
+                return;
             }
         }
 

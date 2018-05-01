@@ -4,6 +4,7 @@ using Xamarin.Forms;
 using WeekPlanner.ViewModels.Base;
 using WeekPlanner.ViewModels;
 using Xunit;
+using System.Threading.Tasks;
 using AutoFixture;
 using IO.Swagger.Api;
 using IO.Swagger.Model;
@@ -24,7 +25,7 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
             bool invoked = false;
             sut.PropertyChanged += (sender, e) =>
             {
-                if (e.PropertyName.Equals(sut.WeekNameDtos))
+                if (e.PropertyName.Equals(nameof(sut.WeekNameDtos)))
                 {
                     invoked = true;
                 }
@@ -42,14 +43,15 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
             //Arrange
             var sut = Fixture.Create<WeekTemplateViewModel>();
             var navService = Fixture.Freeze<Mock<INavigationService>>();
-            var weekTemplateDTO = Fixture.Create<WeekNameDTO>();
+            var weekNameDTO = Fixture.Create<WeekNameDTO>();
 
             //Act
-            sut.ChooseTemplateCommand.Execute(weekTemplateDTO);
+            sut.ChooseTemplateCommand.Execute(weekNameDTO);
 
             //Assert
-            navService.Verify(x => x.NavigateToAsync<WeekPlannerViewModel>(weekTemplateDTO), Times.Once);
+            navService.Verify(x => x.NavigateToAsync<WeekPlannerViewModel>(It.IsAny<WeekNameDTO>()));
         }
+
 
 
     }
