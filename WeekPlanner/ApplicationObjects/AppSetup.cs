@@ -19,46 +19,48 @@ namespace WeekPlanner.ApplicationObjects
 			return containerBuilder.Build();
 		}
 
-		protected virtual void RegisterDependencies(ContainerBuilder cb)
-		{
-			// *** Constant Registrations ***
-			// ViewModels
-
-			cb.RegisterType<ChooseCitizenViewModel>();
-			cb.RegisterType<LoginViewModel>();
-			cb.RegisterType<TestingViewModel>();
-			cb.RegisterType<WeekPlannerViewModel>();
-			cb.RegisterType<ChooseTemplateViewModel>();
-			cb.RegisterType<PictogramSearchViewModel>();
-			cb.RegisterType<ActivityViewModel>();
-			cb.RegisterType<WeekplannerChangeColourViewModel>();
+        protected virtual void RegisterDependencies(ContainerBuilder cb)
+        {
+            // *** Constant Registrations ***
+            // ViewModels
+            cb.RegisterType<ChooseCitizenViewModel>();
+            cb.RegisterType<LoginViewModel>();
+            cb.RegisterType<TestingViewModel>();
+            cb.RegisterType<WeekPlannerViewModel>();
+            cb.RegisterType<ChooseTemplateViewModel>();
+            cb.RegisterType<PictogramSearchViewModel>();
+            cb.RegisterType<ActivityViewModel>();
+	    cb.RegisterType<SettingsViewModel>();
+            cb.RegisterType<MasterViewModel>();
+            cb.RegisterType<WeekplannerChangeColourViewModel>();
 
 
 			// Services
 			cb.RegisterType<NavigationService>().As<INavigationService>();
-			cb.RegisterType<SettingsService>().As<ISettingsService>();
-			cb.RegisterType<DialogService>().As<IDialogService>();
-			cb.RegisterType<RequestService>().As<IRequestService>();
+            cb.RegisterType<SettingsService>().As<ISettingsService>();
+            cb.RegisterType<DialogService>().As<IDialogService>();
+            cb.RegisterType<RequestService>().As<IRequestService>();
 
-			// *** Conditional Registrations ***
-			if (GlobalSettings.Instance.UseMocks)
-			{
-				cb.RegisterType<MockAccountApi>().As<IAccountApi>();
-				cb.RegisterType<MockDepartmentApi>().As<IDepartmentApi>();
-				cb.RegisterType<MockWeekApi>().As<IWeekApi>();
-				cb.RegisterType<MockPictogramApi>().As<IPictogramApi>();
-				cb.RegisterType<MockLoginService>().As<ILoginService>();
+            // *** Conditional Registrations ***
+            if (GlobalSettings.Instance.UseMocks)
+            {
+                cb.RegisterType<MockAccountApi>().As<IAccountApi>();
+                cb.RegisterType<MockDepartmentApi>().As<IDepartmentApi>();
+                cb.RegisterType<MockWeekApi>().As<IWeekApi>();
+                cb.RegisterType<MockPictogramApi>().As<IPictogramApi>();
+                cb.RegisterType<MockLoginService>().As<ILoginService>();
+            }
+            else
+            {
+                var accountApi = new AccountApi {Configuration = {BasePath = GlobalSettings.Instance.BaseEndpoint}};
+                cb.RegisterInstance<IAccountApi>(accountApi);
+                cb.RegisterType<LoginService>().As<ILoginService>();
+                cb.RegisterType<WeekApi>().As<IWeekApi>();
+                cb.RegisterType<PictogramApi>().As<IPictogramApi>();
+                cb.RegisterType<DepartmentApi>().As<IDepartmentApi>();
+                cb.RegisterType<PictogramApi>().As<IPictogramApi>();
+				cb.RegisterType<UserApi>().As<IUserApi>();
 			}
-			else
-			{
-				var accountApi = new AccountApi { Configuration = { BasePath = GlobalSettings.Instance.BaseEndpoint } };
-				cb.RegisterInstance<IAccountApi>(accountApi);
-				cb.RegisterType<LoginService>().As<ILoginService>();
-				cb.RegisterType<WeekApi>().As<IWeekApi>();
-				cb.RegisterType<PictogramApi>().As<IPictogramApi>();
-				cb.RegisterType<DepartmentApi>().As<IDepartmentApi>();
-				cb.RegisterType<PictogramApi>().As<IPictogramApi>();
-			}
-		}
-	}
+        }
+    }
 }
