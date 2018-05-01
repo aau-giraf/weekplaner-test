@@ -131,9 +131,6 @@ namespace IO.Swagger.Client
             foreach(var param in formParams)
                 request.AddParameter(param.Key, param.Value);
 
-            // add file parameter, if any
-                request.AddFile(param.Value.Name, param.Value.Writer, param.Value.FileName, param.Value.ContentType);
-
 
             if (postBody != null) // http body (model or byte[]) parameter
             {
