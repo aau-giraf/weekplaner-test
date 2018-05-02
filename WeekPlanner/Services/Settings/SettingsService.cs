@@ -1,50 +1,48 @@
 using System;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using IO.Swagger.Api;
 using IO.Swagger.Model;
+using SimpleJson;
+using WeekPlanner.Services.Request;
 
 namespace WeekPlanner.Services.Settings
 {
     public class SettingsService : ISettingsService
     {
         private readonly IAccountApi  _accountApi;
-
-        private static string Token;
+        private readonly JsonObject _appSettings;
+        private readonly IUserApi _userApi;
+        private readonly IRequestService _requestService;
+        
+        private static string _token;
         public static Task<string> GetToken()
         {
-            return Task.FromResult(Token);
+            return Task.FromResult(_token);
         }
 
-
-        public SettingsService(IAccountApi accountApi)
+        public SettingsService(IAccountApi accountApi, JsonObject appSettings, IUserApi userApi, IRequestService requestService)
         {
             _accountApi = accountApi;
+            _appSettings = appSettings;
+            _userApi = userApi;
+            _requestService = requestService;
         }
+
+        public string BaseEndpoint
+        {
+            get { return _appSettings["BaseEndpoint"].ToString(); }
+            set { }
+        }
+
+        public bool UseMocks { get; set; }
+
+        public DepartmentNameDTO Department { get; set; }
+
+        public string GuardianAuthToken { get; set; }
+
+        public string CitizenAuthToken { get; set; }
         
-        public bool UseMocks
-        {
-            get => GlobalSettings.Instance.UseMocks;
-            set => GlobalSettings.Instance.UseMocks = value;
-        }
-
-        public DepartmentNameDTO Department
-        {
-            get => GlobalSettings.Instance.Department;
-            set => GlobalSettings.Instance.Department = value;
-        }
-
-        public string GuardianAuthToken
-        {
-            get => GlobalSettings.Instance.GuardianAuthToken;
-            set => GlobalSettings.Instance.GuardianAuthToken = value;
-        }
-
-        public string CitizenAuthToken
-        {
-            get => GlobalSettings.Instance.CitizenAuthToken;
-            set => GlobalSettings.Instance.CitizenAuthToken = value;
-        }
+        public string CurrentCitizenId { get; set; }       
 
         /// <summary>
         /// Sets the API up to using the specified type of authentication token.
@@ -58,11 +56,11 @@ namespace WeekPlanner.Services.Settings
             {
                 case UserType.Citizen:
                     SetAuthTokenInAccountApi(CitizenAuthToken);
-                    Token = CitizenAuthToken;
+                    _token = CitizenAuthToken;
                     break;
                 case UserType.Guardian:
                     SetAuthTokenInAccountApi(GuardianAuthToken);
-                    Token = GuardianAuthToken;
+                    _token = GuardianAuthToken;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(userType), userType, null);
