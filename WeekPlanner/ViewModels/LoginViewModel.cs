@@ -79,7 +79,15 @@ namespace WeekPlanner.ViewModels
                 bool enableGuardianMode = true;
                 await _loginService.LoginAndThenAsync(
                     async () => {
-                        await NavigationService.PopAsync(enableGuardianMode);
+                        var currentUser = await GetUser();
+                        if (currentUser.Role == GirafUserDTO.RoleEnum.Citizen)
+                        {
+                            await NavigationService.NavigateAsMainPage<ChooseCitizenViewModel>(enableGuardianMode);
+                        }
+                        else
+                        {
+                            await NavigationService.InitializeMasterDetailPage();
+                        }
                         ClearUsernameAndPasswordFields();
                     },
                     UserType.Guardian, 
@@ -93,15 +101,7 @@ namespace WeekPlanner.ViewModels
                 IsBusy = true;
                 await _loginService.LoginAndThenAsync(
                     async () => {
-                        var currentUser = await GetUser();
-                        if (currentUser.Role == GirafUserDTO.RoleEnum.Citizen)
-                        {
-                            await NavigationService.NavigateAsMainPage<ChooseCitizenViewModel>();
-                        }
-                        else 
-                        {
-                            await NavigationService.InitializeMasterDetailPage();
-                        }
+                        await NavigationService.NavigateToAsync<ChooseCitizenViewModel>();
                         ClearUsernameAndPasswordFields();
                     },
                     UserType.Guardian, 
