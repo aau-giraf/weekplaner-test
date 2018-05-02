@@ -34,7 +34,7 @@ namespace WeekPlanner.Services.Navigation
 
         public Task InitializeAsync()
         {
-            return NavigateToAsync<LoginViewModel>();
+            return NavigateAsMainPage<LoginViewModel>();
         }
         
         /// <summary>
@@ -77,6 +77,40 @@ namespace WeekPlanner.Services.Navigation
             }
 
             return Task.FromResult(true);
+        }
+
+        public async Task NavigateAsMainPage<TViewModel>(object parameter = null) where TViewModel : ViewModelBase
+        {
+            Page page = CreatePage(typeof(TViewModel), parameter);
+            var customNavigation = new CustomNavigationPage(page);
+            Application.Current.MainPage = customNavigation;
+
+            if (page.BindingContext is ViewModelBase vmBase)
+            {
+                await vmBase.InitializeAsync(parameter);
+            }
+            else
+            {
+                throw new Exception($"{page.BindingContext} does not inherit ViewModelBase");
+            }
+        }
+
+        public async Task InitializeMasterDetailPage(object parameter = null)
+        {
+            var chooseCitizenPage = new ChooseCitizenPage();
+            var customNavigation = new CustomNavigationPage(chooseCitizenPage);
+            var masterPage = new MasterPage();
+            masterPage.Detail = customNavigation;
+            Application.Current.MainPage = masterPage;
+
+            if (chooseCitizenPage.BindingContext is ViewModelBase vmBase)
+            {
+                await vmBase.InitializeAsync(parameter);
+            }
+            else
+            {
+                throw new Exception($"{chooseCitizenPage.BindingContext} does not inherit ViewModelBase");
+            }
         }
 
         private async Task InternalNavigateToAsync(Type viewModelType, object parameter)

@@ -9,6 +9,8 @@ using WeekPlanner.Tests.UnitTests.Base;
 using WeekPlanner.Validations;
 using WeekPlanner.ViewModels;
 using Xunit;
+using IO.Swagger.Model;
+using WeekPlanner.Services.Request;
 
 namespace WeekPlanner.Tests.UnitTests.ViewModels
 {
@@ -25,7 +27,7 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
             // Assert
             Assert.NotNull(sut.Password);
         }
-        
+
         [Fact]
         public void PasswordProperty_OnSet_RaisesPropertyChanged()
         {

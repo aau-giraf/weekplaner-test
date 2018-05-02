@@ -19,10 +19,8 @@ namespace WeekPlanner
         {
             InitializeComponent();
 
-            //InitNavigation();
             FlowListView.Init();
             InitApplication();
-            MainPage = new MasterPage();
         }
 
         private void InitApplication()
@@ -32,7 +30,7 @@ namespace WeekPlanner
             AppSetup setup = new AppSetup();
             AppContainer.Container = setup.CreateContainer(appSettings);
             
-            //InitNavigation();
+            InitNavigation();
             InitFFImage();
         }
 

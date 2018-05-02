@@ -42,19 +42,19 @@ namespace IO.Swagger.Model
             /// Enum Citizen for value: Citizen
             /// </summary>
             [EnumMember(Value = "Citizen")]
-            Citizen = 1,
+            Citizen = 0,
             
             /// <summary>
             /// Enum Department for value: Department
             /// </summary>
             [EnumMember(Value = "Department")]
-            Department = 2,
+            Department = 1,
             
             /// <summary>
             /// Enum Guardian for value: Guardian
             /// </summary>
             [EnumMember(Value = "Guardian")]
-            Guardian = 3,
+            Guardian = 2,
             
             /// <summary>
             /// Enum SuperUser for value: SuperUser

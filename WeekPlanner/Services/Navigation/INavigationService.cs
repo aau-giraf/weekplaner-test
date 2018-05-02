@@ -16,5 +16,9 @@ namespace WeekPlanner.Services.Navigation
         Task RemoveLastFromBackStackAsync();
 
         Task RemoveBackStackAsync();
+
+        Task InitializeMasterDetailPage(object parameter = null);
+
+        Task NavigateAsMainPage<TViewModel>(object parameter = null) where TViewModel : ViewModelBase;
     }
 }

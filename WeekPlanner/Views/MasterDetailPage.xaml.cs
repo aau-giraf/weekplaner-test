@@ -15,8 +15,6 @@ namespace WeekPlanner.Views
         public MasterPage()
         {
             InitializeComponent();
-            Detail = new CustomNavigationPage(new TestingPage());
-           // IsPresented = false;
         }
     }
 }
