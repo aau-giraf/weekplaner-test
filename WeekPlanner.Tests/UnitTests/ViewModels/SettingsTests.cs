@@ -132,5 +132,27 @@ namespace WeekPlanner.Tests.UnitTests.ViewModels
             // Assert
             Assert.Equal(y, sut.ActivitiesShown);
         }
+
+
+        [Fact]
+        public void activitiesShown_OnSet_RaisesPropertyChanged()
+        {
+            // Arrange
+            var sut = Fixture.Create<SettingsViewModel>();
+
+            bool invoked = false;
+            sut.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName.Equals(nameof(sut.ActivitiesShown)))
+                    invoked = true;
+            };
+
+            // Act
+            sut.ActivitiesShown = "1";
+
+            // Assert
+            Assert.True(invoked);
+        }
+
     }
 }
