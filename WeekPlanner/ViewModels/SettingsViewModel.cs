@@ -161,10 +161,10 @@ namespace WeekPlanner.ViewModels
             get => _activitiesshown.ToString();
             set
             {
-                string pat = @"/\d/g";
-                if (Regex.IsMatch(value, pat, RegexOptions.IgnoreCase))
+                bool isdig = int.TryParse(value, out int temp);
+                if (isdig)
                 {
-                    int.TryParse(value, out int temp);
+                   
                     if (temp < 1)
                     {
                         _activitiesshown = 1;
