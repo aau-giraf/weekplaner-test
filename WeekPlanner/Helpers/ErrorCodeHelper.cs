@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
 using IO.Swagger.Model;
 using static IO.Swagger.Model.Response;
 
@@ -45,9 +43,6 @@ namespace WeekPlanner.Helpers
             ToFriendlyString(errorKey.ToString());
         
         public static string ToFriendlyString(this ResponseString.ErrorKeyEnum? errorKey) =>
-            ToFriendlyString(errorKey.ToString());
-        
-        public static string ToFriendlyString(this ResponseChoiceDTO.ErrorKeyEnum? errorKey) =>
             ToFriendlyString(errorKey.ToString());
         
         public static string ToFriendlyString(this ResponseByte.ErrorKeyEnum? errorKey) =>

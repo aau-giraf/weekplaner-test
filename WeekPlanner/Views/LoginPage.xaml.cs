@@ -1,5 +1,3 @@
-using System;
-using IO.Swagger.Model;
 using WeekPlanner.Services.Login;
 using WeekPlanner.ViewModels;
 using WeekPlanner.ViewModels.Base;
@@ -12,10 +10,6 @@ namespace WeekPlanner.Views
         public LoginPage()
         {
             InitializeComponent();
-
-            MessagingCenter.Subscribe<LoginService, string>(this, MessageKeys.LoginFailed, async (sender, errorMessage) => {
-                await DisplayAlert("Fejl", errorMessage, "Luk");
-            });
         }
 
         void Username_Completed(object sender, System.EventArgs e)

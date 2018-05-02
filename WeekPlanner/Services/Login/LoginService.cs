@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using IO.Swagger.Api;
-using IO.Swagger.Client;
 using IO.Swagger.Model;
-using WeekPlanner.Helpers;
+using WeekPlanner.Services.Request;
 using WeekPlanner.Services.Settings;
-using WeekPlanner.ViewModels.Base;
-using Xamarin.Forms;
 
 namespace WeekPlanner.Services.Login
 {
     public class LoginService : ILoginService
     {
         private readonly IAccountApi _accountApi;
+        private readonly IRequestService _requestService;
         private readonly ISettingsService _settingsService;
         
-        public LoginService(IAccountApi accountApi, ISettingsService settingsService)
+        public LoginService(IAccountApi accountApi, IRequestService requestService, ISettingsService settingsService)
         {
             _accountApi = accountApi;
+            _requestService = requestService;
             _settingsService = settingsService;
         }
 
@@ -28,48 +27,60 @@ namespace WeekPlanner.Services.Login
         /// <param name="userType"></param>
         /// <param name="username"></param>
         /// <param name="password">Provide for Departments, but not Citizens</param>
-        /// <returns>Sends a LoginFailed or LoginSucceed message through MessagingCenter</returns>
         /// <exception cref="ArgumentException"></exception>
         public async Task LoginAndThenAsync(Func<Task> onSuccess, UserType userType, string username, string password)
         {
-            if (userType == UserType.Department && string.IsNullOrEmpty(password))
+            if (userType == UserType.Guardian && string.IsNullOrEmpty(password))
             {
                 throw new ArgumentException("A password should always be provided for Departments.");
             }
-            
-            ResponseString result;
-            try
-            {
-                var loginDTO = new LoginDTO(username, password);
-                result = await _accountApi.V1AccountLoginPostAsync(loginDTO);
-            }
-            catch (ApiException)
-            {
-                var friendlyErrorMessage = ErrorCodeHelper.ToFriendlyString(ResponseString.ErrorKeyEnum.Error);
-                MessagingCenter.Send(this, MessageKeys.LoginFailed, friendlyErrorMessage);
-                return;
-            }
 
-            if (result?.Success == true)
+            async Task OnRequestSuccess(ResponseString result)
             {
-                if(userType == UserType.Citizen)
+                if (userType == UserType.Citizen)
                 {
                     _settingsService.CitizenAuthToken = result.Data;
                 }
-                else // Department
+                else // Guardian
                 {
-                    _settingsService.DepartmentAuthToken = result.Data;
+                    _settingsService.GuardianAuthToken = result.Data;
                 }
 
                 _settingsService.UseTokenFor(userType);
-                
+
                 await onSuccess.Invoke();
             }
-            else
+
+            await _requestService.SendRequestAndThenAsync(this,
+                async () => await _accountApi.V1AccountLoginPostAsync(new LoginDTO(username, password)),
+                OnRequestSuccess);
+        }
+
+        public async Task LoginAsync( UserType userType, string username, string password)
+        {
+            if (userType == UserType.Guardian && string.IsNullOrEmpty(password))
             {
-                var friendlyErrorMessage = result?.ErrorKey.ToFriendlyString();
-                MessagingCenter.Send(this, MessageKeys.LoginFailed, friendlyErrorMessage);
+                throw new ArgumentException("A password should always be provided for Departments.");
             }
+
+            Task OnRequestSuccess(ResponseString result)
+            {
+                if (userType == UserType.Citizen)
+                {
+                    _settingsService.CitizenAuthToken = result.Data;
+                }
+                else // Guardian
+                {
+                    _settingsService.GuardianAuthToken = result.Data;
+                }
+
+                _settingsService.UseTokenFor(userType);
+                return Task.FromResult(false);
+            }
+
+            await _requestService.SendRequestAndThenAsync(this,
+                async () => await _accountApi.V1AccountLoginPostAsync(new LoginDTO(username, password)),
+                OnRequestSuccess);
         }
     }
 }

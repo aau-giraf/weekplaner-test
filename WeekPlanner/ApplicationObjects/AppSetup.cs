@@ -1,13 +1,12 @@
 ﻿using Autofac;
 using WeekPlanner.Services.Navigation;
-using WeekPlanner.Views;
 using WeekPlanner.ViewModels;
 using IO.Swagger.Api;
 using WeekPlanner.Services.Mocks;
-using IO.Swagger.Client;
 using WeekPlanner.Services.Settings;
-using WeekPlanner.ViewModels.Base;
 using WeekPlanner.Services.Login;
+using WeekPlanner.Services.Request;
+using WeekPlanner.Services;
 
 namespace WeekPlanner.ApplicationObjects
 {
@@ -28,14 +27,19 @@ namespace WeekPlanner.ApplicationObjects
             cb.RegisterType<LoginViewModel>();
             cb.RegisterType<TestingViewModel>();
             cb.RegisterType<WeekPlannerViewModel>();
-            cb.RegisterType<UserModeSwitchViewModel>();
             cb.RegisterType<ChooseTemplateViewModel>();
             cb.RegisterType<WeekTemplateViewModel>();
             cb.RegisterType<PictogramSearchViewModel>();
+            cb.RegisterType<ActivityViewModel>();
+			cb.RegisterType<SettingsViewModel>();
+            cb.RegisterType<MasterViewModel>();
 
-            // Services
-            cb.RegisterType<NavigationService>().As<INavigationService>();
+
+			// Services
+			cb.RegisterType<NavigationService>().As<INavigationService>();
             cb.RegisterType<SettingsService>().As<ISettingsService>();
+            cb.RegisterType<DialogService>().As<IDialogService>();
+            cb.RegisterType<RequestService>().As<IRequestService>();
 
             // *** Conditional Registrations ***
             if (GlobalSettings.Instance.UseMocks)
@@ -57,7 +61,8 @@ namespace WeekPlanner.ApplicationObjects
                 cb.RegisterType<DepartmentApi>().As<IDepartmentApi>();
                 cb.RegisterType<PictogramApi>().As<IPictogramApi>();
                 cb.RegisterType<WeekTemplateApi>().As<IWeekTemplateApi>();
-            }
+   				cb.RegisterType<UserApi>().As<IUserApi>();
+			}
         }
     }
 }

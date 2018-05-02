@@ -353,7 +353,19 @@ namespace IO.Swagger.Model
             /// Enum NoWeekTemplateFound for value: NoWeekTemplateFound
             /// </summary>
             [EnumMember(Value = "NoWeekTemplateFound")]
-            NoWeekTemplateFound = 53
+            NoWeekTemplateFound = 53,
+            
+            /// <summary>
+            /// Enum UserAlreadyHasDepartment for value: UserAlreadyHasDepartment
+            /// </summary>
+            [EnumMember(Value = "UserAlreadyHasDepartment")]
+            UserAlreadyHasDepartment = 54,
+            
+            /// <summary>
+            /// Enum MissingSettings for value: MissingSettings
+            /// </summary>
+            [EnumMember(Value = "MissingSettings")]
+            MissingSettings = 55
         }
 
         /// <summary>

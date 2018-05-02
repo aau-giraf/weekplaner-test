@@ -9,18 +9,30 @@
     <!-- TODO: CachingStrategy causes crash, why?  -->
     <!--CachingStrategy="RecycleElement"-->
     <ListView.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                                                      Command="{Binding PictoClickedCommand}"
+                                                      EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}" />
         <behaviors:ListViewDeselectSelectedItemBehavior />
     </ListView.Behaviors>
     <ListView.ItemTemplate>
         <DataTemplate>
             <ViewCell>
                 <!--DownsampleToViewSize="true"-->
-                <ffimageloading:CachedImage
-                    VerticalOptions="Center"
-                    LoadingPlaceholder="image_loading.png"
-                    ErrorPlaceholder="image_loading.png"
-                    Source="{Binding}"
-                    Margin="5" />
+					<Frame 
+						OutlineColor="{Binding Border}"
+						BackgroundColor="{Binding Border}"
+						VerticalOptions="Center"
+						HasShadow="false"
+						Padding="0"
+					>
+	                <ffimageloading:CachedImage
+	                    VerticalOptions="Center"
+	                    LoadingPlaceholder="image_loading.png"
+	                    ErrorPlaceholder="image_loading.png"
+	                    Source="{Binding URL}"
+	                    Scale=".8"
+					/>
+					</Frame>
             </ViewCell>
         </DataTemplate>
     </ListView.ItemTemplate>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:base="clr-namespace:WeekPlanner.ViewModels.Base"
+             xmlns:behaviors="clr-namespace:WeekPlanner.Behaviors"
+             x:Class="WeekPlanner.Views.SettingsPage"
+             base:ViewModelLocator.AutoWireViewModel="True">
+    <ContentPage.Content>
+        <TableView Intent="Settings">
+            <TableRoot>
+                <!--Number of activity-->
+                
+                <!--Number of days shown-->
+                
+                <!--Different completion mark-->
+
+                <!--Orientation lock-->
+                <TableSection Title="Orienterings lås">
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout Orientation="Horizontal" Padding="15, 0">
+                                <Label Text="Ugeplans orientering" VerticalOptions="Center"></Label>
+                                <Picker HorizontalOptions="EndAndExpand" SelectedIndexChanged="Picker_SelectedIndexChanged">
+                                    <Picker.Items>
+                                        <x:String>A</x:String>
+                                        <x:String>B</x:String>
+                                        <x:String>C</x:String>
+                                    </Picker.Items>
+                                </Picker>
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </TableSection>
+            </TableRoot>
+        </TableView>
+    </ContentPage.Content>
+</ContentPage>

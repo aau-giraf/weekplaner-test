@@ -7,7 +7,6 @@ using WeekPlanner.ViewModels;
 using WeekPlanner.ViewModels.Base;
 using WeekPlanner.Views;
 using Xamarin.Forms;
-using System.Linq;
 
 namespace WeekPlanner.Services.Navigation
 {
@@ -26,7 +25,6 @@ namespace WeekPlanner.Services.Navigation
         public Task InitializeAsync()
         {
             return NavigateToAsync<TestingViewModel>();
-            
             // TODO: Remember chosen department and maybe authtoken
             /*if (string.IsNullOrEmpty(GlobalSettings.Instance.AuthToken))
             {
@@ -93,15 +91,10 @@ namespace WeekPlanner.Services.Navigation
             }
             else
             {
-                if (Application.Current.MainPage is CustomNavigationPage navigationPage)
-                {
-                    await navigationPage.PushAsync(page);
-                }
-                else
-                {
-                    Application.Current.MainPage = new CustomNavigationPage(page);
-                }
-            }
+                var master = (MasterPage)Application.Current.MainPage;
+                var detail = (CustomNavigationPage)master.Detail;
+                await detail.PushAsync(page);                
+             }
 
             if (page.BindingContext is ViewModelBase vmBase)
             {

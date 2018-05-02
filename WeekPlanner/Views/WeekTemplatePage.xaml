@@ -24,7 +24,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Margin="5">
                                 <Label Text="{Binding Name}"/>
                             </StackLayout>
                         </ViewCell>

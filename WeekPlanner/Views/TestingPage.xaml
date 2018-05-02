@@ -11,7 +11,7 @@
             <StackLayout VerticalOptions="Center">
                 <Button
                     Text="Log ind"
-                    Command="{Binding NavigateToLoginCommand}" />
+                    Command="{Binding NavigateToLoginCommand}"  />
                 <Button
                     Text="Vælg borger"
                     Command="{Binding NavigateToChooseCitizenCommand}" />
@@ -25,11 +25,14 @@
                     Text="Vælg skabelon"
                     Command="{Binding NavigateToChooseTemplateCommand}" />
                 <Button
-                    Text="Brugermode skift"
-                    Command="{Binding NavigateToUserModeSwitchCommand}" />
-                <Button
                     Text="Søg efter pictogram"
                     Command="{Binding NavigateToPictogramSearchCommand}" />
+                <Button 
+                    Text="Aktivitet" 
+                    Command="{Binding NavigateToActivityCommand}" />
+                <Button
+                    Text="Indstillinger"
+                    Command="{Binding NavigateToSettingsCommand}" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
