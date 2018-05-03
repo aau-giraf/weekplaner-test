@@ -63,7 +63,7 @@ namespace WeekPlanner.ViewModels
             set
             {
                 _userSettings = value;
-                RaisePropertyChanged(() => _userSettings); //Todo Raise properties
+                RaisePropertyChanged(() => _userSettings);
             }
         }
 
@@ -132,12 +132,12 @@ namespace WeekPlanner.ViewModels
             if (navigationData is Tuple<int?, int?> weekYearAndNumber)
             {
                 await GetWeekPlanForCitizenAsync(weekYearAndNumber);
-                await GetUserSettingsForCitizenAsync();
             }
             else
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
+            await GetUserSettingsForCitizenAsync();
         }
 
         private async Task GetUserSettingsForCitizenAsync()
@@ -381,7 +381,72 @@ namespace WeekPlanner.ViewModels
         // TODO: Override the navigation bar backbutton when this is available.
         // Will most likely only be available if/when the custom navigation bar gets implemented.
 
-        
+        private int NumberOfDaysShown => UserSettings.Data.NrOfDaysToDisplay ?? 7;
+        public int RemainingDaysShown
+        {
+            get
+            {
+                DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+                if ((int)currentDay + NumberOfDaysShown > 7)
+                {
+                    return NumberOfDaysShown - (NumberOfDaysShown + (int)currentDay - 7);
+                }
+
+                return NumberOfDaysShown;
+            }
+        }
+
+        private DayEnum GetWeekDay(DayOfWeek day)
+        {
+            switch (day)
+            {
+                case DayOfWeek.Monday: return DayEnum.Monday;
+                case DayOfWeek.Tuesday: return DayEnum.Tuesday;
+                case DayOfWeek.Wednesday: return DayEnum.Wednesday;
+                case DayOfWeek.Thursday: return DayEnum.Thursday;
+                case DayOfWeek.Friday: return DayEnum.Friday;
+                case DayOfWeek.Saturday: return DayEnum.Saturday;
+                case DayOfWeek.Sunday: return DayEnum.Sunday;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public bool IsDayShown(DayEnum day)
+        {
+            DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+            if (day < currentDay)
+            {
+                return false;
+            }
+            return currentDay + NumberOfDaysShown > day;
+        }
+
+
+        public bool IsMondayShown => IsDayShown(DayEnum.Monday);
+        public bool IsTuesdayShown => IsDayShown(DayEnum.Tuesday);
+        public bool IsWednesdayShown => IsDayShown(DayEnum.Wednesday);
+        public bool IsThursdayShown => IsDayShown(DayEnum.Thursday);
+        public bool IsFridayShown => IsDayShown(DayEnum.Friday);
+        public bool IsSaturdayShown => IsDayShown(DayEnum.Saturday);
+        public bool IsSundayShown => IsDayShown(DayEnum.Sunday);
+
+        public int GetDayColumn(DayEnum day)
+        {
+            DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+            if (currentDay + NumberOfDaysShown <= day || currentDay > day)
+            {
+                return 0;
+            }
+            return day - currentDay;
+        }
+
+        public int MondayColumnInt => GetDayColumn(DayEnum.Monday);
+        public int TuesdayColumnInt => GetDayColumn(DayEnum.Tuesday);
+        public int WednesdayColumnInt => GetDayColumn(DayEnum.Wednesday);
+        public int ThursdayColumnInt => GetDayColumn(DayEnum.Thursday);
+        public int FridayColumnInt => GetDayColumn(DayEnum.Friday);
+        public int SaturdayColumnInt => GetDayColumn(DayEnum.Saturday);
+        public int SundayColumnInt => GetDayColumn(DayEnum.Sunday);
 
 
         public ObservableCollection<ActivityDTO> MondayPictos => GetPictosOrEmptyList(DayEnum.Monday);

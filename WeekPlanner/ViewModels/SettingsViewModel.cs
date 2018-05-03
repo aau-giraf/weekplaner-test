@@ -145,6 +145,8 @@ namespace WeekPlanner.ViewModels
                 {
                     _shownDays = value;
                 }
+
+                Settings.NrOfDaysToDisplay = _shownDays;
                 RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
             }
         }
