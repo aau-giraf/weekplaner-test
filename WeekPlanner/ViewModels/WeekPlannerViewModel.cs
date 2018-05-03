@@ -27,12 +27,14 @@ namespace WeekPlanner.ViewModels
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
         private readonly ISettingsService _settingsService;
+        private readonly IUserApi _userApi;
 
         private ActivityDTO _selectedActivity;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _userModeImage;
+        private ResponseSettingDTO _userSettings;
 
         public bool EditModeEnabled
         {
@@ -52,6 +54,16 @@ namespace WeekPlanner.ViewModels
                 _weekDto = value;
                 RaisePropertyChanged(() => WeekDTO);
                 RaisePropertyForDays();
+            }
+        }
+
+        public ResponseSettingDTO UserSettings
+        {
+            get => _userSettings;
+            set
+            {
+                _userSettings = value;
+                RaisePropertyChanged(() => _userSettings);
             }
         }
 
@@ -98,7 +110,8 @@ namespace WeekPlanner.ViewModels
             IRequestService requestService,
             IWeekApi weekApi,
             IDialogService dialogService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IUserApi userApi)
             : base(navigationService)
         {
             _requestService = requestService;
@@ -107,6 +120,7 @@ namespace WeekPlanner.ViewModels
             _loginService = loginService;
             _requestService = requestService;
             _settingsService = settingsService;
+            _userApi = userApi;
 
             UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_citizen.png");
             MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded,
@@ -123,6 +137,17 @@ namespace WeekPlanner.ViewModels
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
+        }
+
+
+        private async Task GetUserSettingsForCitizenAsync()
+        {
+            _settingsService.UseTokenFor(UserType.Citizen);
+
+            await _requestService.SendRequestAndThenAsync(
+                requestAsync: () => _userApi.V1UserSettingsGetAsync(),
+                onSuccess: result => { UserSettings = result; }
+            );
         }
 
         // TODO: Handle situation where no days exist
@@ -357,6 +382,73 @@ namespace WeekPlanner.ViewModels
         // Will most likely only be available if/when the custom navigation bar gets implemented.
 
 
+        private int NumberOfDaysShown => UserSettings?.Data.NrOfDaysToDisplay ?? 7;
+        public int RemainingDaysShown
+        {
+            get
+            {
+                DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+                if ((int)currentDay + NumberOfDaysShown > 7)
+                {
+                    return NumberOfDaysShown - (NumberOfDaysShown + (int)currentDay - 7);
+                }
+
+                return NumberOfDaysShown;
+            }
+        }
+
+        private DayEnum GetWeekDay(DayOfWeek day)
+        {
+            switch (day)
+            {
+                case DayOfWeek.Monday: return DayEnum.Monday;
+                case DayOfWeek.Tuesday: return DayEnum.Tuesday;
+                case DayOfWeek.Wednesday: return DayEnum.Wednesday;
+                case DayOfWeek.Thursday: return DayEnum.Thursday;
+                case DayOfWeek.Friday: return DayEnum.Friday;
+                case DayOfWeek.Saturday: return DayEnum.Saturday;
+                case DayOfWeek.Sunday: return DayEnum.Sunday;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public bool IsDayShown(DayEnum day)
+        {
+            DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+            if (day < currentDay)
+            {
+                return false;
+            }
+            return currentDay + NumberOfDaysShown > day;
+        }
+
+
+        public bool IsMondayShown => IsDayShown(DayEnum.Monday);
+        public bool IsTuesdayShown => IsDayShown(DayEnum.Tuesday);
+        public bool IsWednesdayShown => IsDayShown(DayEnum.Wednesday);
+        public bool IsThursdayShown => IsDayShown(DayEnum.Thursday);
+        public bool IsFridayShown => IsDayShown(DayEnum.Friday);
+        public bool IsSaturdayShown => IsDayShown(DayEnum.Saturday);
+        public bool IsSundayShown => IsDayShown(DayEnum.Sunday);
+
+        public int GetDayColumn(DayEnum day)
+        {
+            DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
+            if (currentDay + NumberOfDaysShown <= day || currentDay > day)
+            {
+                return 0;
+            }
+            return day - currentDay;
+        }
+
+        public int MondayColumnInt => GetDayColumn(DayEnum.Monday);
+        public int TuesdayColumnInt => GetDayColumn(DayEnum.Tuesday);
+        public int WednesdayColumnInt => GetDayColumn(DayEnum.Wednesday);
+        public int ThursdayColumnInt => GetDayColumn(DayEnum.Thursday);
+        public int FridayColumnInt => GetDayColumn(DayEnum.Friday);
+        public int SaturdayColumnInt => GetDayColumn(DayEnum.Saturday);
+        public int SundayColumnInt => GetDayColumn(DayEnum.Sunday);
+
         public ObservableCollection<ActivityDTO> MondayPictos => GetPictosOrEmptyList(DayEnum.Monday);
         public ObservableCollection<ActivityDTO> TuesdayPictos => GetPictosOrEmptyList(DayEnum.Tuesday);
         public ObservableCollection<ActivityDTO> WednesdayPictos => GetPictosOrEmptyList(DayEnum.Wednesday);
@@ -365,9 +457,28 @@ namespace WeekPlanner.ViewModels
         public ObservableCollection<ActivityDTO> SaturdayPictos => GetPictosOrEmptyList(DayEnum.Saturday);
         public ObservableCollection<ActivityDTO> SundayPictos => GetPictosOrEmptyList(DayEnum.Sunday);
 
+        public int NumberOfActivitiesshown => UserSettings?.Data.ActivitiesCount ?? 30;
+
+        public List<WeekdayDTO> Adjustedweek()
+        {
+            List<WeekdayDTO> weekadjusted = new List<WeekdayDTO>();
+            if (NumberOfActivitiesshown != 30)
+            {
+                foreach (var day in WeekDTO.Days)
+                {
+                    weekadjusted.Add(new WeekdayDTO(day.Day, day.Activities.Take(NumberOfActivitiesshown).ToList()));
+                }
+            }
+            else
+            {
+                weekadjusted = WeekDTO?.Days;
+            }
+            return weekadjusted;
+        }
+
         private ObservableCollection<ActivityDTO> GetPictosOrEmptyList(DayEnum dayEnum)
         {
-            var day = WeekDTO?.Days.FirstOrDefault(x => x.Day == dayEnum);
+            var day = Adjustedweek()?.FirstOrDefault(x => x.Day == dayEnum);
             if (day == null)
             {
                 return new ObservableCollection<ActivityDTO>();

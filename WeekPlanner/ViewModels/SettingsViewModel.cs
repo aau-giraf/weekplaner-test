@@ -126,5 +126,57 @@ namespace WeekPlanner.ViewModels
                 onExceptionAsync: async () => await NavigationService.PopAsync(),
                 onRequestFailedAsync: async () => await NavigationService.PopAsync());
         }
+
+        private int _shownDays = 7;
+        public int NumberOfShownDaysAtOnce
+        {
+            get => _shownDays;
+            set
+            {
+                if (value < 1)
+                {
+                    _shownDays = 1;
+                }
+                else if (value > 7)
+                {
+                    _shownDays = 7;
+                }
+                else
+                {
+                    _shownDays = value;
+                }
+
+                //Settings.NrOfDaysToDisplay = _shownDays; //Todo Find a way to add to the database without crashing
+            }
+        }
+
+
+        private int _activitiesshown;
+        public string ActivitiesShown
+        {
+            get => _activitiesshown.ToString();
+            set
+            {
+                bool isdig = int.TryParse(value, out int temp);
+                if (isdig)
+                {
+
+                    if (temp < 1)
+                    {
+                        _activitiesshown = 1;
+                    }
+                    else
+                    {
+                        _activitiesshown = temp;
+                    }
+
+                }
+                else
+                {
+                    _activitiesshown = 30;
+                }
+                //Settings.ActivitiesCount = _activitiesshown; //Todo Find a way to add to the database without crashing
+            }
+        }
     }
 }
