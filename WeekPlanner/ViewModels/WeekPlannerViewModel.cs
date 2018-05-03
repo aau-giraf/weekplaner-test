@@ -27,12 +27,14 @@ namespace WeekPlanner.ViewModels
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
         private readonly ISettingsService _settingsService;
+        private readonly IUserApi _userApi;
 
         private ActivityDTO _selectedActivity;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _userModeImage;
+        private ResponseSettingDTO _userSettings;
 
         public bool EditModeEnabled
         {
@@ -52,6 +54,16 @@ namespace WeekPlanner.ViewModels
                 _weekDto = value;
                 RaisePropertyChanged(() => WeekDTO);
                 RaisePropertyForDays();
+            }
+        }
+
+        public ResponseSettingDTO UserSettings
+        {
+            get => _userSettings;
+            set
+            {
+                _userSettings = value;
+                RaisePropertyChanged(() => _userSettings); //Todo Raise properties
             }
         }
 
@@ -98,16 +110,17 @@ namespace WeekPlanner.ViewModels
             IRequestService requestService,
             IWeekApi weekApi,
             IDialogService dialogService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IUserApi userApi)
             : base(navigationService)
         {
             _requestService = requestService;
             _weekApi = weekApi;
             _dialogService = dialogService;
-            _userApi = userApi;
             _loginService = loginService;
             _requestService = requestService;
             _settingsService = settingsService;
+            _userApi = userApi;
 
             UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_citizen.png");
             MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded,
@@ -119,11 +132,22 @@ namespace WeekPlanner.ViewModels
             if (navigationData is Tuple<int?, int?> weekYearAndNumber)
             {
                 await GetWeekPlanForCitizenAsync(weekYearAndNumber);
+                await GetUserSettingsForCitizenAsync();
             }
             else
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
+        }
+
+        private async Task GetUserSettingsForCitizenAsync()
+        {
+            _settingsService.UseTokenFor(UserType.Citizen);
+
+            await _requestService.SendRequestAndThenAsync(
+                requestAsync: () => _userApi.V1UserSettingsGetAsync(),
+                onSuccess: result => { UserSettings = result; }
+                );
         }
 
         // TODO: Handle situation where no days exist
@@ -356,6 +380,8 @@ namespace WeekPlanner.ViewModels
 
         // TODO: Override the navigation bar backbutton when this is available.
         // Will most likely only be available if/when the custom navigation bar gets implemented.
+
+        
 
 
         public ObservableCollection<ActivityDTO> MondayPictos => GetPictosOrEmptyList(DayEnum.Monday);

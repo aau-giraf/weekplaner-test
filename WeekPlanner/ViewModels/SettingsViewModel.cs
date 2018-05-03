@@ -126,15 +126,7 @@ namespace WeekPlanner.ViewModels
                 onExceptionAsync: async () => await NavigationService.PopAsync(),
                 onRequestFailedAsync: async () => await NavigationService.PopAsync());
         }
-    }
 
-		private void SetSettings(ResponseLauncherOptionsDTO result)
-		{
-			OrientationSetting = result.Data.Orientation;
-		    NumberOfShownDaysAtOnce = result.Data.AppGridSizeColumns ?? 7;
-		    // Set all the other settings here.
-		    ActivitiesShown = result.Data.ActivitiesCount.ToString();
-		}
         private int _shownDays = 7;
         public int NumberOfShownDaysAtOnce
         {
@@ -156,6 +148,8 @@ namespace WeekPlanner.ViewModels
                 RaisePropertyChanged(() => NumberOfShownDaysAtOnce);
             }
         }
+        
+
         private int _activitiesshown;
         public string ActivitiesShown
         {
