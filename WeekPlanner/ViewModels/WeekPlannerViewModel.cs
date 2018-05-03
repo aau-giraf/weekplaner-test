@@ -181,6 +181,26 @@ namespace WeekPlanner.ViewModels
             RaisePropertyForDays();
         }
 
+        public int NumberOfActivitiesshown => UserSettings.Data.ActivitiesCount ?? 30 ;
+       
+        public List<WeekdayDTO> Adjustedweek()
+        {
+            List<WeekdayDTO> weekadjusted = new List<WeekdayDTO>();
+            if (NumberOfActivitiesshown != 30)
+            {
+                foreach (var day in WeekDTO.Days)
+                {
+                    weekadjusted.Add(new WeekdayDTO(day.Day, day.Activities.Take(NumberOfActivitiesshown).ToList()));
+                }
+            }
+            else
+            {
+                weekadjusted = WeekDTO.Days;
+            }
+            return weekadjusted;
+        }
+
+
 
         private async Task SaveSchedule()
         {
@@ -459,7 +479,7 @@ namespace WeekPlanner.ViewModels
 
         private ObservableCollection<ActivityDTO> GetPictosOrEmptyList(DayEnum dayEnum)
         {
-            var day = WeekDTO?.Days.FirstOrDefault(x => x.Day == dayEnum);
+            var day = Adjustedweek().FirstOrDefault(x => x.Day == dayEnum);
             if (day == null)
             {
                 return new ObservableCollection<ActivityDTO>();

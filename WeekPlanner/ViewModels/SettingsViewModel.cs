@@ -170,12 +170,14 @@ namespace WeekPlanner.ViewModels
                     {
                         _activitiesshown = temp;
                     }
-                    RaisePropertyChanged(() => ActivitiesShown);
+                   
                 }
                 else
                 {
                     _activitiesshown = 30;
                 }
+                Settings.ActivitiesCount = _activitiesshown;
+                RaisePropertyChanged(() => ActivitiesShown);
             }
         }
     }
