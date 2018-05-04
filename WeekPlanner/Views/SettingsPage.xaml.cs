@@ -11,11 +11,5 @@ namespace WeekPlanner.Views
         {
             InitializeComponent();
         }
-
-		public void Picker_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			DisplayAlert("Hey", "Med", "Dig");
-		}
-
 	}
 }

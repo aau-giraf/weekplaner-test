@@ -22,58 +22,16 @@ namespace WeekPlanner.ViewModels
 
         private GirafUserDTO _girafCitizen;
         public GirafUserDTO GirafCitizen
-        {
-            get => _girafCitizen;
-            set
-            {
-                _girafCitizen = value;
-                RaisePropertyChanged(() => GirafCitizen);
-            }
-        }
+		{
+			get => _girafCitizen;
+			set
+			{
+				_girafCitizen = value;
+				RaisePropertyChanged(() => GirafCitizen);
+			}
+		}
 
-        private bool _orientationSlider;
-        public bool OrientationSwitch
-        {
-            get => _orientationSlider;
-            set
-            {
-                if (Settings.Orientation == SettingDTO.OrientationEnum.Portrait)
-                {
-                    _orientationSlider = true;
-                }
-                else
-                {
-                    _orientationSlider = false;
-                }
-                RaisePropertyChanged(() => OrientationSwitch);
-                UpdateSettingsAsync();
-            }
-        }
-
-        public ICommand HandleSwitchChangedCommand => new Command(() =>
-        {
-            if (Settings.Orientation == SettingDTO.OrientationEnum.Portrait)
-            {
-                Settings.Orientation = SettingDTO.OrientationEnum.Landscape;
-            }
-            else
-            {
-                Settings.Orientation = SettingDTO.OrientationEnum.Portrait;
-            }
-        });
-
-
-        private async void UpdateSettingsAsync()
-        {
-            await _requestService.SendRequestAndThenAsync(
-                requestAsync: () => _userApi.V1UserByIdSettingsPatchAsync(_settingsService.CurrentCitizenId, _settings),
-                onSuccess: dto => { });
-        }
-        
-        
-        private SettingDTO.OrientationEnum _orientationSetting;
         private SettingDTO _settings;
-        
         public SettingDTO Settings
         {
             get => _settings;
@@ -84,9 +42,14 @@ namespace WeekPlanner.ViewModels
             }
         }
 
+		private async void UpdateSettingsAsync()
+		{
+			await _requestService.SendRequestAndThenAsync(
+				requestAsync: () => _userApi.V1UserByIdSettingsPatchAsync(_settingsService.CurrentCitizenId, _settings),
+				onSuccess: dto => { });
+		}
 
-
-        public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, 
+		public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, 
             IDialogService dialogService, IRequestService requestService, IUserApi userApi) : base(navigationService)
         {
             _settingsService = settingsService;
