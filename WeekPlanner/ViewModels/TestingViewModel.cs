@@ -1,6 +1,11 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Acr.UserDialogs;
 using IO.Swagger.Api;
+using IO.Swagger.Client;
 using IO.Swagger.Model;
+using WeekPlanner.Services;
 using WeekPlanner.Services.Login;
 using WeekPlanner.Services.Navigation;
 using WeekPlanner.Services.Settings;
@@ -15,13 +20,28 @@ namespace WeekPlanner.ViewModels
         private readonly IDepartmentApi _departmentApi;
         private readonly ILoginService _loginService;
         private readonly ISettingsService _settingsService;
+        private readonly IDialogService _dialogService;
 
         public TestingViewModel(INavigationService navigationService, IDepartmentApi departmentApi,
-        ILoginService loginService, ISettingsService settingsService) : base(navigationService)
+                                ILoginService loginService, ISettingsService settingsService, IDialogService dialogService) : base(navigationService)
         {
+            _dialogService = dialogService;
             _departmentApi = departmentApi;
             _loginService = loginService;
             _settingsService = settingsService;
+        }
+
+        public override async Task InitializeAsync(object navigationData)
+        {
+            if (navigationData is UserNameDTO userNameDTO)
+            {
+                await _loginService.LoginAsync(UserType.Citizen,
+                    userNameDTO.UserName);
+            }
+            else
+            {
+                throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
+            }
         }
 
         public ICommand NavigateToLoginCommand =>
@@ -35,10 +55,11 @@ namespace WeekPlanner.ViewModels
             new Command(async () =>
             {
                 _settingsService.Department = new DepartmentNameDTO(1);
-                await _loginService.LoginAndThenAsync(async () =>
-                        await NavigationService.NavigateToAsync<ChooseCitizenViewModel>(
-                            (await _departmentApi.V1DepartmentByIdCitizensGetAsync(_settingsService.Department.Id)).Data),
-                    UserType.Department, "Graatand", "password");
+                    await _loginService.LoginAndThenAsync(async () =>
+                            await NavigationService.NavigateToAsync<ChooseCitizenViewModel>(
+                                (await _departmentApi.V1DepartmentByIdCitizensGetAsync(_settingsService.Department.Id))
+                                .Data),
+                        UserType.Guardian, "Graatand", "password");
             });
 
         public ICommand NavigateToWeekPlannerCommand =>
@@ -53,9 +74,15 @@ namespace WeekPlanner.ViewModels
         public ICommand NavigateToActivityCommand =>
             new Command(async () => await NavigationService.NavigateToAsync<ActivityViewModel>());
 
+<<<<<<< HEAD
         public ICommand NavigateToCitizenSchedulesCommand =>
             new Command(async () => await NavigationService.NavigateToAsync<CitizenSchedulesViewModel>());
 
 
     }
+=======
+        public ICommand NavigateToSettingsCommand =>
+        new Command(async () => await NavigationService.NavigateToAsync<SettingsViewModel>());
+	}
+>>>>>>> 0573501efca6c73f1bcc6c6c18b0304a6a4fba63
 }

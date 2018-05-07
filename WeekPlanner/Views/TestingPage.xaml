@@ -28,8 +28,13 @@
                     Text="Aktivitet" 
                     Command="{Binding NavigateToActivityCommand}" />
                 <Button
+<<<<<<< HEAD
                     Text="Se Ugeplaner"
                     Command="{Binding NavigateToCitizenSchedulesCommand}" />
+=======
+                    Text="Indstillinger"
+                    Command="{Binding NavigateToSettingsCommand}" />
+>>>>>>> 0573501efca6c73f1bcc6c6c18b0304a6a4fba63
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

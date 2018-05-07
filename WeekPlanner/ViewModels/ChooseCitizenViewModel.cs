@@ -37,11 +37,15 @@ namespace WeekPlanner.ViewModels
         }
 
 	    public ICommand ChooseCitizenCommand => new Command<UserNameDTO>(async usernameDTO =>
-		    await UseDepartmentTokenAndNavigateToWeekPlan(usernameDTO));
+		    await UseGuardianTokenAndNavigateToWeekPlan(usernameDTO));
 
-	    private async Task UseDepartmentTokenAndNavigateToWeekPlan(UserNameDTO usernameDTO)
+	    private async Task UseGuardianTokenAndNavigateToWeekPlan(UserNameDTO usernameDTO)
 	    {
+<<<<<<< HEAD
 		    _settingsService.UseTokenFor(UserType.Department);
+=======
+		    _settingsService.UseTokenFor(UserType.Guardian);
+>>>>>>> 0573501efca6c73f1bcc6c6c18b0304a6a4fba63
 		    await NavigationService.NavigateToAsync<CitizenSchedulesViewModel>(usernameDTO);
 	    }
 
@@ -49,11 +53,11 @@ namespace WeekPlanner.ViewModels
 	    {
 		    // Always use the departmentToken when coming to this view.
 		    // It might have been changed to using the citizenToken
-            _settingsService.UseTokenFor(UserType.Department);
+            _settingsService.UseTokenFor(UserType.Guardian);
 
 		    await _requestService.SendRequestAndThenAsync(this,
 			    requestAsync: async () => await _departmentApi.V1DepartmentByIdCitizensGetAsync(_settingsService.Department.Id),
-			    onSuccess: result => { CitizenNames = new ObservableCollection<UserNameDTO>(result.Data);});
+			    onSuccess: result => CitizenNames = new ObservableCollection<UserNameDTO>(result.Data));
 	    }
 
 	    public override async Task InitializeAsync(object navigationData)
