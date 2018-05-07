@@ -24,6 +24,7 @@ namespace WeekPlanner.ViewModels
         private readonly IPictogramApi _pictogramApi;
         private readonly IDialogService _dialogService;
         private readonly IRequestService _requestService;
+        private readonly IWeekTemplateApi _templateApi;
 
         private ValidatableObject<string> _scheduleName;
         public ValidatableObject<string> ScheduleName
@@ -46,16 +47,30 @@ namespace WeekPlanner.ViewModels
             }
         }
 
+        private WeekNameDTO _weekTemplate;
+        public WeekNameDTO WeekTemplate
+        {
+            get => _weekTemplate;
+            set
+            {
+                _weekTemplate = value;
+                RaisePropertyChanged(() => WeekTemplate);
+            }
+        }
+
         public ICommand SaveWeekScheduleCommand => new Command(SaveWeekSchedule);
         public ICommand ChangePictogramCommand => new Command(ChangePictogram);
+        public ICommand ChooseTemplateCommand => new Command(ChooseTemplate);
 
         public NewScheduleViewModel(
             INavigationService navigationService, 
             IWeekApi weekApi, 
             IPictogramApi pictogramApi, 
-            IRequestService  requestService, 
-            IDialogService dialogService) : base(navigationService)
+            IRequestService requestService, 
+            IDialogService dialogService,
+            IWeekTemplateApi templateApi) : base(navigationService)
         {
+            _templateApi = templateApi;
             _weekApi = weekApi;
             _pictogramApi = pictogramApi;
             _requestService = requestService;
@@ -73,6 +88,9 @@ namespace WeekPlanner.ViewModels
             if (navigationData is PictogramDTO pictoDTO){
                 WeekThumbNail = pictoDTO;
             }
+            if (navigationData is WeekNameDTO weekNameDTO){
+                WeekTemplate = weekNameDTO;
+            }
             return Task.FromResult(false);
 		}
 
@@ -84,6 +102,14 @@ namespace WeekPlanner.ViewModels
             NavigationService.NavigateToAsync<PictogramSearchViewModel>();
 		    IsBusy = false;
 		}
+
+        public void ChooseTemplate()
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+            NavigationService.NavigateToAsync<WeekTemplateViewModel>();
+            IsBusy = false;
+        }
 
         private async void SaveWeekSchedule()
         {
@@ -106,6 +132,10 @@ namespace WeekPlanner.ViewModels
                 }
                 _weekDTO.Days = list;
 
+                if (WeekTemplate != null) {
+                    throw new NotImplementedException();
+                }
+
                 await _requestService.SendRequestAndThenAsync(
                 requestAsync: () => _weekApi.V1WeekPostAsync(_weekDTO),
                 onSuccess: async result => { 
@@ -123,5 +153,6 @@ namespace WeekPlanner.ViewModels
             var isWeekNameValid = _scheduleName.Validate();
             return isWeekNameValid;
         }
+
     }
 }

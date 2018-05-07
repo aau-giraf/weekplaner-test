@@ -17,7 +17,7 @@
                 <ListView.Behaviors>
                     <behaviors1:EventToCommandBehavior         
                         EventName="ItemTapped"
-                        Command="{Binding ChooseTemplateCommand}"
+                        Command="{Binding ItemTappedCommand}"
                         EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}" />
                     <behaviors1:ListViewDeselectSelectedItemBehavior />
                 </ListView.Behaviors>

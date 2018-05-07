@@ -59,6 +59,16 @@ namespace WeekPlanner.ViewModels
             }
         }
 
+        public ICommand ItemTappedCommand => new Command<WeekNameDTO>(dto => ItemTapped(dto));
+
+        async void ItemTapped(WeekNameDTO dto) 
+        {
+            if (IsBusy) return;
+            IsBusy = true;
+            await NavigationService.PopAsync(dto);
+            IsBusy = false;
+        }
+
         private async Task NavigateToTemplate(WeekNameDTO dto)
         {
             await NavigationService.NavigateToAsync<WeekPlannerViewModel>(dto);

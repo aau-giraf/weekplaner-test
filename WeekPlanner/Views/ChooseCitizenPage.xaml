@@ -12,7 +12,7 @@
 
             <!-- HeightRequest fixes bug on Android 7.0 where the search bar does not show up -->
             <SearchBar x:Name="Search" Placeholder="Søg" TextChanged="SearchBar_TextChanged" HeightRequest="50"/>
-            
+            <Button Text="Template" Command="{Binding NavigateToTemplateCommand}" />
             <ListView 
                 x:Name="CitizensListView" 
                 ItemsSource="{Binding CitizenNames}" 

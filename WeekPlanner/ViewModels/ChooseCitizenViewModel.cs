@@ -67,6 +67,9 @@ namespace WeekPlanner.ViewModels
 	    {
 		    await GetAndSetCitizenNamesAsync();
 	    }
+
+        public ICommand NavigateToTemplateCommand =>
+            new Command(async () => await NavigationService.NavigateToAsync<WeekTemplateViewModel>());
     }
 
 }

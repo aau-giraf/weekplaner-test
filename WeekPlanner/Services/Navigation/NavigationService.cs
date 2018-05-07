@@ -16,7 +16,7 @@ namespace WeekPlanner.Services.Navigation
         {
             get
             {
-                var mainPage = Application.Current.MainPage as CustomNavigationPage;
+                var mainPage = (Application.Current.MainPage as MasterDetailPage).Detail as CustomNavigationPage;
                 var viewModel = mainPage.Navigation.NavigationStack[mainPage.Navigation.NavigationStack.Count - 2].BindingContext;
                 return viewModel as ViewModelBase;
             }
@@ -26,7 +26,7 @@ namespace WeekPlanner.Services.Navigation
         {
             get
             {
-                var mainPage = Application.Current.MainPage as CustomNavigationPage;
+                var mainPage = (Application.Current.MainPage as MasterDetailPage).Detail as CustomNavigationPage;
                 var viewModel = mainPage.Navigation.NavigationStack.Last().BindingContext;
                 return viewModel as ViewModelBase;
             }
@@ -43,7 +43,8 @@ namespace WeekPlanner.Services.Navigation
         /// <returns></returns>
         public async Task PopAsync(object navigationData = null)
         {
-            var navigationPage = Application.Current.MainPage as CustomNavigationPage;
+            
+            var navigationPage = (Application.Current.MainPage as MasterDetailPage).Detail as CustomNavigationPage;
 
             await navigationPage?.PopAsync();
             await CurrentPageViewModel.PoppedAsync(navigationData);

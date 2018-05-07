@@ -27,12 +27,15 @@ namespace WeekPlanner.ViewModels
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
         private readonly ISettingsService _settingsService;
+        private readonly IWeekTemplateApi _weekTemplateApi;
         
         private ActivityDTO _selectedActivity;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _userModeImage;
+        private bool fromTemplate;
+
 
         public bool EditModeEnabled
         {
@@ -98,7 +101,8 @@ namespace WeekPlanner.ViewModels
             IRequestService requestService, 
             IWeekApi weekApi, 
             IDialogService dialogService, 
-            ISettingsService settingsService) 
+            ISettingsService settingsService, 
+            IWeekTemplateApi weekTemplateApi)
             : base(navigationService)
         {
             _requestService = requestService;
@@ -107,6 +111,7 @@ namespace WeekPlanner.ViewModels
             _loginService = loginService;
             _requestService = requestService;
             _settingsService = settingsService;
+            _weekTemplateApi = weekTemplateApi;
 
             UserModeImage = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
             MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded, (sender) => SetToGuardianMode());
@@ -114,24 +119,39 @@ namespace WeekPlanner.ViewModels
 
         public override async Task InitializeAsync(object navigationData)
         {
-            if (navigationData is long weekId)
+            switch (navigationData)
             {
-                await GetWeekPlanForCitizenAsync(weekId);
-            }
-            else
-            {
-                throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
+                case long weekId:
+                    await GetWeekPlanForCitizenAsync(weekId);
+                    return;
+                case WeekNameDTO weekNameDto: // From template
+                    await GetWeekPlanForCitizenAsync((long)weekNameDto.Id, true);
+                    fromTemplate = true;
+                    return;
+                default:
+                    throw new ArgumentException("Must be of a weekId (long) or type WeekNameDTO", nameof(navigationData));
             }
         }
 
         // TODO: Handle situation where no days exist
-        private async Task GetWeekPlanForCitizenAsync(long weekId)
+        private async Task GetWeekPlanForCitizenAsync(long weekId, bool isTemplate = false)
         {
 
             _settingsService.UseTokenFor(UserType.Citizen);
 
+            Func<Task<ResponseWeekDTO>> getWeekRequest;
+
+            if(isTemplate)
+            {
+                getWeekRequest = () => _weekTemplateApi.V1WeekTemplateByIdGetAsync(weekId);
+            }
+            else
+            {
+                getWeekRequest = () => _weekApi.V1WeekByIdGetAsync(weekId);
+            }
+
             await _requestService.SendRequestAndThenAsync(
-                requestAsync: () => _weekApi.V1WeekByIdGetAsync(weekId),
+                requestAsync: getWeekRequest,
                 onSuccess: result =>
                 {
                     WeekDTO = result.Data;
@@ -171,13 +191,16 @@ namespace WeekPlanner.ViewModels
 
             if (!confirmed)
             {
+                IsBusy = false;
                 return;
             }
             
             _settingsService.UseTokenFor(UserType.Citizen);
             
-            if (WeekDTO.Id is null)
+            if (WeekDTO.Id is null || fromTemplate)
             {
+                // Set Id to null in case of fromTemplate
+                WeekDTO.Id = null;
                 await SaveNewSchedule();
             }
             else
