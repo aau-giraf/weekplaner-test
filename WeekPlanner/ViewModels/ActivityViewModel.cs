@@ -7,24 +7,24 @@ using WeekPlanner.ViewModels.Base;
 using Xamarin.Forms;
 using IO.Swagger.Api;
 using WeekPlanner.Helpers;
+using static IO.Swagger.Model.ActivityDTO;
+using WeekPlanner.Services.Settings;
 
 namespace WeekPlanner.ViewModels
 {
-    public enum State
-    {
-        Normal, Checked, Cancelled
-    }
-
-
     public class ActivityViewModel : ViewModelBase
     {
         private ActivityDTO _activity;
-        private bool _isGuardianMode = true;
-        private State _state = State.Checked;
+
+        public ISettingsService SettingsService { get; private set; }
+
         readonly IPictogramApi _pictogramApi;
 
-        public ActivityViewModel(INavigationService navigationService, IPictogramApi pictogramApi) : base(navigationService)
+        public ActivityViewModel(INavigationService navigationService, 
+                                 IPictogramApi pictogramApi,
+                                 ISettingsService settingsService) : base(navigationService)
         {
+            SettingsService = settingsService;
             _pictogramApi = pictogramApi;
         }
 
@@ -43,6 +43,8 @@ namespace WeekPlanner.ViewModels
             {
                 _activity = value;
                 RaisePropertyChanged(() => Activity);
+                RaisePropertyChanged(() => State);
+                RaisePropertyChanged(() => FriendlyStateString);
             }
         }
 
@@ -61,14 +63,17 @@ namespace WeekPlanner.ViewModels
         {
             switch (State)
             {
-                case State.Normal:
-                    State = State.Checked;
+                case StateEnum.Normal:
+                    State = StateEnum.Completed;
                     break;
-                case State.Checked:
-                    State = State.Cancelled;
+                case StateEnum.Completed:
+                    State = (SettingsService.IsInGuardianMode) ? StateEnum.Canceled : StateEnum.Active;
                     break;
-                case State.Cancelled:
-                    State = State.Normal;
+                case StateEnum.Canceled:
+                    State = StateEnum.Active;
+                    break;
+                case StateEnum.Active:
+                    State = StateEnum.Normal;
                     break;
             }
         });
@@ -78,22 +83,18 @@ namespace WeekPlanner.ViewModels
             Activity.Pictogram = weekPictogram;
         }
 
-        public bool IsGuardianMode
+        public StateEnum State
         {
-            get => _isGuardianMode;
-            set
+            get 
             {
-                _isGuardianMode = value;
-                RaisePropertyChanged(() => IsGuardianMode);
+                if(Activity == null) {
+                    return StateEnum.Active;
+                }
+                return (StateEnum)Activity.State;
             }
-        }
-
-        public State State
-        {
-            get => _state;
             set
             {
-                _state = value;
+                Activity.State = value;
                 RaisePropertyChanged(() => State);
                 RaisePropertyChanged(() => FriendlyStateString);
             }
@@ -105,11 +106,13 @@ namespace WeekPlanner.ViewModels
             {
                 switch (State)
                 {
-                    case State.Normal:
+                    case StateEnum.Normal:
                         return "Normal";
-                    case State.Checked:
+                    case StateEnum.Active:
+                        return "Aktiv";
+                    case StateEnum.Completed:
                         return "Udført";
-                    case State.Cancelled:
+                    case StateEnum.Canceled:
                         return "Aflyst";
                     default:
                         return State.ToString();
@@ -117,20 +120,17 @@ namespace WeekPlanner.ViewModels
             }
         }
 
-        public ICommand ToggleGuardianMode => new Command(() => IsGuardianMode = !IsGuardianMode);
         public ICommand SaveCommand => new Command(async () =>
         {
-            // TODO: error handling - use RequestService
-            //await _pictogramApi.V1PictogramByIdPutAsync(pictogramDTO.Id, pictogramDTO);
+            await NavigationService.PopAsync(this);
         });
 
         public override async Task PoppedAsync(object navigationData) {
-            if (navigationData is WeekPictogramDTO newPicto) {
-                Activity.Pictogram = newPicto;
+            if (navigationData is PictogramDTO newPicto) {
+                WeekPictogramDTO newWeekPicto = PictoToWeekPictoDtoHelper.Convert(newPicto);
+                Activity.Pictogram = newWeekPicto;
                 RaisePropertyChanged(() => Activity);
-                await NavigationService.PopAsync(this);
             }
         }
-
     }
 }

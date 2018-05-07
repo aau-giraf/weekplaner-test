@@ -29,7 +29,11 @@ namespace WeekPlanner.ViewModels
 
         public ICommand WeekTappedCommand => new Command<WeekDTO>(ListViewItemTapped);
         public ICommand WeekDeletedCommand => new Command<WeekDTO>(async week => await WeekDeletedTapped(week));
-        public ICommand AddWeekScheduleCommand => new Command(async () => await AddWeekSchedule());
+        
+        // Create new weekschedule button in toolbar
+        public ICommand ToolbarButtonCommand => new Command(async () => await AddWeekSchedule());
+        public bool ShowToolbarButton => true;
+        public ImageSource ToolbarButtonIcon => (FileImageSource)ImageSource.FromFile("icon_add.png");
 
         public CitizenSchedulesViewModel(INavigationService navigationService, IRequestService requestService,
             IDialogService dialogService, IWeekApi weekApi, ILoginService loginService,
@@ -62,18 +66,6 @@ namespace WeekPlanner.ViewModels
             {
                 _weeks = value;
                 RaisePropertyChanged(() => Weeks);
-            }
-        }
-
-        private ObservableCollection<PictogramDTO> _weekImage;
-
-        public ObservableCollection<PictogramDTO> WeekImage
-        {
-            get => _weekImage;
-            set
-            {
-                _weekImage = value;
-                RaisePropertyChanged(() => WeekImage);
             }
         }
 
@@ -141,6 +133,7 @@ namespace WeekPlanner.ViewModels
         public override async Task PoppedAsync(object navigationData)
         {
             Weeks.Clear();
+            WeekNameDTOS.Clear();
             await InitializeWeekSchedules();
         }
 
@@ -148,7 +141,7 @@ namespace WeekPlanner.ViewModels
         {
             if (navigationData is UserNameDTO userNameDTO)
             {
-                await _loginService.LoginAndThenAsync(InitializeWeekSchedules, UserType.Citizen, userNameDTO.UserName);
+                await _loginService.LoginAndThenAsync(UserType.Citizen, userNameDTO.UserName, "", InitializeWeekSchedules);
             }
             else
             {

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using IO.Swagger.Api;
 using IO.Swagger.Model;
-using WeekPlanner.Services.Login;
 using WeekPlanner.Services.Navigation;
 using WeekPlanner.Services.Request;
 using WeekPlanner.Services.Settings;
@@ -17,34 +16,24 @@ using Xamarin.Forms;
 using static IO.Swagger.Model.WeekdayDTO;
 using WeekPlanner.Services;
 using WeekPlanner.Helpers;
+using static IO.Swagger.Model.ActivityDTO;
 
 namespace WeekPlanner.ViewModels
 {
     public class WeekPlannerViewModel : ViewModelBase
     {
-        private readonly ILoginService _loginService;
         private readonly IRequestService _requestService;
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
-        private readonly ISettingsService _settingsService;
+        public ISettingsService SettingsService { get; }
         private readonly IUserApi _userApi;
 
         private ActivityDTO _selectedActivity;
         private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
-        private ImageSource _userModeImage;
+        private ImageSource _toolbarButtonIcon;
         private ResponseSettingDTO _userSettings;
-
-        public bool EditModeEnabled
-        {
-            get => _editModeEnabled;
-            set
-            {
-                _editModeEnabled = value;
-                RaisePropertyChanged(() => EditModeEnabled);
-            }
-        }
 
         public WeekDTO WeekDTO
         {
@@ -67,21 +56,21 @@ namespace WeekPlanner.ViewModels
             }
         }
 
-        public ImageSource UserModeImage
+        public ImageSource ToolbarButtonIcon
         {
-            get => _userModeImage;
+            get => _toolbarButtonIcon;
             set
             {
-                _userModeImage = value;
-                RaisePropertyChanged(() => UserModeImage);
+                _toolbarButtonIcon = value;
+                RaisePropertyChanged(() => ToolbarButtonIcon);
             }
         }
-
-        public ICommand ToggleEditModeCommand => new Command(async () => await SwitchUserModeAsync());
-
+        
+        public bool ShowToolbarButton { get; set; }
+        
+        public ICommand ToolbarButtonCommand => new Command(async () => await SwitchUserModeAsync());
+        
         public ICommand SaveCommand => new Command(async () => await SaveSchedule());
-        public ICommand OnBackButtonPressedCommand => new Command(async () => await BackButtonPressed());
-
         public ICommand NavigateToPictoSearchCommand => new Command<DayEnum>(async weekday =>
         {
             if (IsBusy) return;
@@ -95,21 +84,16 @@ namespace WeekPlanner.ViewModels
         {
             if (IsBusy) return;
             IsBusy = true;
-            if (_editModeEnabled)
-            {
-                _selectedActivity = activity;
-                await NavigationService.NavigateToAsync<ActivityViewModel>(activity);
-            }
-
+            _selectedActivity = activity;
+            await NavigationService.NavigateToAsync<ActivityViewModel>(activity);
             IsBusy = false;
         });
 
         public WeekPlannerViewModel(
-            INavigationService navigationService,
-            ILoginService loginService,
-            IRequestService requestService,
-            IWeekApi weekApi,
-            IDialogService dialogService,
+            INavigationService navigationService, 
+            IRequestService requestService, 
+            IWeekApi weekApi, 
+            IDialogService dialogService, 
             ISettingsService settingsService,
             IUserApi userApi)
             : base(navigationService)
@@ -117,14 +101,14 @@ namespace WeekPlanner.ViewModels
             _requestService = requestService;
             _weekApi = weekApi;
             _dialogService = dialogService;
-            _loginService = loginService;
             _requestService = requestService;
-            _settingsService = settingsService;
+            SettingsService = settingsService;
             _userApi = userApi;
 
-            UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_citizen.png");
-            MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded,
-                (sender) => SetToGuardianMode());
+            OnBackButtonPressedCommand = new Command(async () => await BackButtonPressed());
+            ShowToolbarButton = true;
+            ToolbarButtonIcon = (FileImageSource)ImageSource.FromFile("icon_default_guardian.png");
+            MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded, sender => SetToGuardianMode());
         }
 
         public override async Task InitializeAsync(object navigationData)
@@ -153,7 +137,7 @@ namespace WeekPlanner.ViewModels
         // TODO: Handle situation where no days exist
         private async Task GetWeekPlanForCitizenAsync(Tuple<int?, int?> weekYearAndNumber)
         {
-            _settingsService.UseTokenFor(UserType.Citizen);
+            SettingsService.UseTokenFor(UserType.Citizen);
 
             await _requestService.SendRequestAndThenAsync(
                 requestAsync: () =>
@@ -174,7 +158,7 @@ namespace WeekPlanner.ViewModels
             {
                 // Insert pictogram in the very bottom of the day
                 var newOrderInBottom = dayToAddTo.Activities.Max(d => d.Order) + 1;
-                dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom));
+                dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom, StateEnum.Normal));
             }
 
             // TODO: Fix
@@ -195,10 +179,11 @@ namespace WeekPlanner.ViewModels
 
             if (!confirmed)
             {
+                IsBusy = false;
                 return;
             }
 
-            _settingsService.UseTokenFor(UserType.Citizen);
+            SettingsService.UseTokenFor(UserType.Citizen);
 
             if (WeekDTO.WeekNumber is null)
             {
@@ -238,9 +223,10 @@ namespace WeekPlanner.ViewModels
         public override async Task PoppedAsync(object navigationData)
         {
             // Happens after choosing a pictogram in Pictosearch
-            if (navigationData is WeekPictogramDTO pictogramDTO)
+            if (navigationData is PictogramDTO pictogramDTO)
             {
-                InsertPicto(pictogramDTO);
+                WeekPictogramDTO weekPictogramDTO = PictoToWeekPictoDtoHelper.Convert(pictogramDTO);
+                InsertPicto(weekPictogramDTO);
             }
 
             // Happens when popping from ActivityViewModel
@@ -289,7 +275,7 @@ namespace WeekPlanner.ViewModels
             if (IsBusy) return;
 
             IsBusy = true;
-            if (EditModeEnabled)
+            if (SettingsService.IsInGuardianMode)
             {
                 var result = await _dialogService.ActionSheetAsync("Der er ændringer der ikke er gemt. Vil du gemme?",
                     "Annuller", null, "Gem ændringer", "Gem ikke");
@@ -297,22 +283,17 @@ namespace WeekPlanner.ViewModels
                 switch (result)
                 {
                     case "Annuller":
-                        IsBusy = false;
                         break;
 
                     case "Gem ændringer":
-                        EditModeEnabled = false;
                         await SaveSchedule();
-                        UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_citizen.png");
-                        IsBusy = false;
+                        SetToCitizenMode();
                         break;
 
                     case "Gem ikke":
-                        EditModeEnabled = false;
-                        UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_citizen.png");
                         if (WeekDTO.WeekNumber != null)
                             await GetWeekPlanForCitizenAsync(new Tuple<int?, int?>(WeekDTO.WeekYear, WeekDTO.WeekNumber));
-                        IsBusy = false;
+                        SetToCitizenMode();
                         break;
                 }
             }
@@ -342,10 +323,18 @@ namespace WeekPlanner.ViewModels
             }
         }
 
+        private void SetToCitizenMode()
+        {
+            ShowBackButton = false;
+            SettingsService.IsInGuardianMode = false;
+            ToolbarButtonIcon = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
+        }
+        
         private void SetToGuardianMode()
         {
-            EditModeEnabled = true;
-            UserModeImage = (FileImageSource) ImageSource.FromFile("icon_default_guardian.png");
+            ShowBackButton = true;
+            SettingsService.IsInGuardianMode = true;
+            ToolbarButtonIcon = (FileImageSource)ImageSource.FromFile("icon_default_guardian.png");
         }
 
         private async Task BackButtonPressed()
@@ -353,7 +342,7 @@ namespace WeekPlanner.ViewModels
             if (IsBusy) return;
 
             IsBusy = true;
-            if (EditModeEnabled)
+            if (SettingsService.IsInGuardianMode)
             {
                 var result = await _dialogService.ActionSheetAsync("Der er ændringer der ikke er gemt. Vil du gemme?",
                     "Annuller", null, "Gem ændringer", "Gem ikke");
@@ -361,26 +350,44 @@ namespace WeekPlanner.ViewModels
                 switch (result)
                 {
                     case "Annuller":
-                        IsBusy = false;
                         break;
 
                     case "Gem ændringer":
                         await SaveSchedule();
                         await NavigationService.PopAsync();
-                        IsBusy = false;
                         break;
 
                     case "Gem ikke":
                         await NavigationService.PopAsync();
-                        IsBusy = false;
                         break;
                 }
             }
+
+            IsBusy = false;
         }
 
-        // TODO: Override the navigation bar backbutton when this is available.
-        // Will most likely only be available if/when the custom navigation bar gets implemented.
-
+        private DayEnum GetCurrentDay() {
+            var today = DateTime.Today.DayOfWeek;
+            switch(today) {
+                case DayOfWeek.Monday:
+                    return DayEnum.Monday;
+                case DayOfWeek.Tuesday:
+                    return DayEnum.Tuesday;
+                case DayOfWeek.Wednesday:
+                    return DayEnum.Wednesday;
+                case DayOfWeek.Thursday:
+                    return DayEnum.Thursday;
+                case DayOfWeek.Friday:
+                    return DayEnum.Friday;
+                case DayOfWeek.Saturday:
+                    return DayEnum.Saturday;
+                case DayOfWeek.Sunday:
+                    return DayEnum.Sunday;
+                default:
+                    throw new NotSupportedException("DayEnum out of bounds");
+            }
+                                
+        }
 
         private int NumberOfDaysShown => UserSettings?.Data.NrOfDaysToDisplay ?? 7;
         public int RemainingDaysShown
@@ -494,6 +501,7 @@ namespace WeekPlanner.ViewModels
 
         private void RaisePropertyForDays()
         {
+            SetActiveActivity();
             RaisePropertyChanged(() => MondayPictos);
             RaisePropertyChanged(() => TuesdayPictos);
             RaisePropertyChanged(() => WednesdayPictos);
@@ -502,6 +510,21 @@ namespace WeekPlanner.ViewModels
             RaisePropertyChanged(() => SaturdayPictos);
             RaisePropertyChanged(() => SundayPictos);
             RaisePropertyChanged(() => Height);
+        }
+
+        private void SetActiveActivity()
+        {
+            var today = GetCurrentDay();
+            var todaysActivities = WeekDTO.Days.First(d => d.Day == today).Activities;
+
+            foreach (var activity in todaysActivities)
+            {
+                if(activity.State == StateEnum.Normal) 
+                {
+                    activity.State = StateEnum.Active;
+                    return;
+                }
+            }
         }
     }
 }

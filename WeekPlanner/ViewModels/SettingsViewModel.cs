@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IO.Swagger.Api;
 using IO.Swagger.Model;
+using WeekPlanner.Models;
 using WeekPlanner.Services;
 using WeekPlanner.Services.Login;
 using WeekPlanner.Services.Navigation;
@@ -17,21 +20,53 @@ namespace WeekPlanner.ViewModels
     {
         private readonly ISettingsService _settingsService;
         private readonly IRequestService _requestService;
-        private readonly IDialogService _dialogService;
         private readonly IUserApi _userApi;
 
-        private GirafUserDTO _girafCitizen;
-        public GirafUserDTO GirafCitizen
+        public WeekdayColors WeekdayColors { get; set; }
+
+        private IEnumerable<SettingDTO.ThemeEnum> _themes = new List<SettingDTO.ThemeEnum>(){
+            SettingDTO.ThemeEnum.AndroidBlue, SettingDTO.ThemeEnum.GirafGreen, SettingDTO.ThemeEnum.GirafRed, SettingDTO.ThemeEnum.GirafYellow
+        };
+
+        public SettingDTO.ThemeEnum ThemeSelected
         {
-            get => _girafCitizen;
+            get => _settingsService.CurrentCitizenSettingDTO.Theme;
             set
             {
-                _girafCitizen = value;
-                RaisePropertyChanged(() => GirafCitizen);
+                var currentTheme = Application.Current.Resources;
+                switch (value)
+                {
+                    case SettingDTO.ThemeEnum.GirafRed:
+                        currentTheme.MergedWith = typeof(Themes.RedTheme);
+                        SetThemeInSettingDTOAndUpdate(value);
+                        break;
+                    case SettingDTO.ThemeEnum.GirafYellow:
+                        currentTheme.MergedWith = typeof(Themes.OrangeTheme);
+                        SetThemeInSettingDTOAndUpdate(value);
+                        break;
+                    case SettingDTO.ThemeEnum.AndroidBlue:
+                        currentTheme.MergedWith = typeof(Themes.BlueTheme);
+                        SetThemeInSettingDTOAndUpdate(value);
+                        break;
+                    case SettingDTO.ThemeEnum.GirafGreen:
+                        currentTheme.MergedWith = typeof(Themes.GreenTheme);
+                        SetThemeInSettingDTOAndUpdate(value);
+                        break;
+                    default:
+                        break;
+                }
+                RaisePropertyChanged(() => ThemeSelected);
             }
         }
 
+        private void SetThemeInSettingDTOAndUpdate(SettingDTO.ThemeEnum pickedTheme)
+        {
+            Settings.Theme = pickedTheme;
+            UpdateSettingsAsync();
+        }
+
         private bool _orientationSlider;
+
         public bool OrientationSwitch
         {
             get => _orientationSlider;
@@ -45,6 +80,7 @@ namespace WeekPlanner.ViewModels
                 {
                     _orientationSlider = false;
                 }
+
                 RaisePropertyChanged(() => OrientationSwitch);
                 UpdateSettingsAsync();
             }
@@ -63,67 +99,24 @@ namespace WeekPlanner.ViewModels
         });
 
 
-        private async void UpdateSettingsAsync()
+        private async Task UpdateSettingsAsync()
         {
-            await _requestService.SendRequestAndThenAsync(
-                requestAsync: () => _userApi.V1UserByIdSettingsPatchAsync(_settingsService.CurrentCitizenId, _settings),
-                onSuccess: dto => { });
-        }
-        
-        
-        private SettingDTO.OrientationEnum _orientationSetting;
-        private SettingDTO _settings;
-        
-        public SettingDTO Settings
-        {
-            get => _settings;
-            set
-            {
-                _settings = value;
-                RaisePropertyChanged(() => Settings);
-            }
+            _settingsService.UseTokenFor(UserType.Citizen);
+            await _requestService.SendRequest(_userApi.V1UserSettingsPatchAsync(Settings));
         }
 
-
+        public SettingDTO Settings => _settingsService.CurrentCitizenSettingDTO;
 
         public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, 
-            IDialogService dialogService, IRequestService requestService, IUserApi userApi) : base(navigationService)
+            IRequestService requestService, IUserApi userApi) : base(navigationService)
         {
             _settingsService = settingsService;
             _requestService = requestService;
             _userApi = userApi;
-            _dialogService = dialogService;
-        }
 
-        public override async Task InitializeAsync(object navigationData)
-        {
-            _settingsService.UseTokenFor(UserType.Citizen);
-            await InitializeCitizen();
-        }
-
-        private async Task InitializeCitizen()
-        {
-            await _requestService.SendRequestAndThenAsync(
-                requestAsync: async () => await _userApi.V1UserGetAsync(),
-                onSuccessAsync: async result =>
-                {
-                    GirafCitizen = result.Data;
-                    await InitalizeSettings();
-                },
-                onExceptionAsync: async () => await NavigationService.PopAsync(),
-                onRequestFailedAsync: async () => await NavigationService.PopAsync());
-        }
-
-        private async Task InitalizeSettings()
-        {
-            await _requestService.SendRequestAndThenAsync(
-                requestAsync: async () => await _userApi.V1UserSettingsGetAsync(),
-                onSuccess: result =>
-                {
-                    Settings = result.Data;
-                },
-                onExceptionAsync: async () => await NavigationService.PopAsync(),
-                onRequestFailedAsync: async () => await NavigationService.PopAsync());
+            WeekdayColors = new WeekdayColors(_settingsService.CurrentCitizenSettingDTO);
+            // Update settings regardless of which property calls 'RaisePropertyChanged'
+            WeekdayColors.PropertyChanged += (sender, e) => UpdateSettingsAsync();
         }
 
         private int _shownDays = 7;
