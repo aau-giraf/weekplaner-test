@@ -93,7 +93,6 @@ namespace WeekPlanner.ViewModels
             _requestService = requestService;
             _userApi = userApi;
             _dialogService = dialogService;
-
         }
 
         public override async Task InitializeAsync(object navigationData)
@@ -145,12 +144,11 @@ namespace WeekPlanner.ViewModels
                 {
                     _shownDays = value;
                 }
-
+                RaisePropertyChanged(() => LimitNumberofActivities);
                 //Settings.NrOfDaysToDisplay = _shownDays; //Todo Find a way to add to the database without crashing
             }
         }
-
-
+        public bool LimitNumberofActivities => (NumberOfShownDaysAtOnce == 1);
         private int _activitiesshown;
         public string ActivitiesShown
         {

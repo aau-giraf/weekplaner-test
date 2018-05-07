@@ -16,15 +16,5 @@ namespace WeekPlanner.Views
 		{
 			DisplayAlert("Hey", "Med", "Dig");
 		}
-
-        private void ActivityPicker_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            DisplayAlert("Hey", "Med", "Dig");
-        }
-
-        private void DayPicker_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            DisplayAlert("Hey", "Med", "Dig Igen");
-        }
     }
 }
