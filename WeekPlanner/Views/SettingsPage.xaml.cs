@@ -16,6 +16,5 @@ namespace WeekPlanner.Views
 		{
 			DisplayAlert("Hey", "Med", "Dig");
 		}
-
-	}
+    }
 }
