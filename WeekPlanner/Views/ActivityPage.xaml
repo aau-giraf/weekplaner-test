@@ -22,7 +22,8 @@
                     <!--Left Side-->
                     <StackLayout Grid.Column="0"
                              VerticalOptions="Center">
-                        <ffimageloading:CachedImage Source="{Binding Activity.Pictogram.Id, Converter={StaticResource IdToRawPictoUrlConverter}}" />
+                        <ffimageloading:CachedImage Source="{Binding Activity.Pictogram.Id, Converter={StaticResource IdToRawPictoUrlConverter}}"
+                                                    DownsampleToViewSize="True"/>
                         <Grid Padding="30" IsVisible="{Binding IsGuardianMode}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
