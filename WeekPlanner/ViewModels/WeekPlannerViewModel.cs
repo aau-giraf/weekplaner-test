@@ -461,19 +461,23 @@ namespace WeekPlanner.ViewModels
 
         public List<WeekdayDTO> Adjustedweek()
         {
-            List<WeekdayDTO> weekadjusted = new List<WeekdayDTO>();
-            if (NumberOfActivitiesshown != 30)
+            if (NumberOfDaysShown != 1)
             {
-                foreach (var day in WeekDTO.Days)
+                List<WeekdayDTO> weekadjusted = new List<WeekdayDTO>();
+                if (NumberOfActivitiesshown != 30)
                 {
-                    weekadjusted.Add(new WeekdayDTO(day.Day, day.Activities.Take(NumberOfActivitiesshown).ToList()));
+                    foreach (var day in WeekDTO.Days)
+                    {
+                        weekadjusted.Add(new WeekdayDTO(day.Day, day.Activities.Take(NumberOfActivitiesshown).ToList()));
+                    }
                 }
+                else
+                {
+                    weekadjusted = WeekDTO?.Days;
+                }
+                return weekadjusted;
             }
-            else
-            {
-                weekadjusted = WeekDTO?.Days;
-            }
-            return weekadjusted;
+            return WeekDTO?.Days;
         }
 
         private ObservableCollection<ActivityDTO> GetPictosOrEmptyList(DayEnum dayEnum)

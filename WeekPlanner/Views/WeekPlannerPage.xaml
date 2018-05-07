@@ -65,13 +65,15 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <!-- DAYS TITLEBAR -->
-                <Label Text="Mandag" Grid.Column="{Binding MondayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsMondayShown}" />
-                <Label Text="Tirsdag" Grid.Column="{Binding TuesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsTuesdayShown}" />
-                <Label Text="Onsdag" Grid.Column="{Binding WednesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsWednesdayShown}" />
-                <Label Text="Torsdag" Grid.Column="{Binding ThursdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsThursdayShown}" />
-                <Label Text="Fredag" Grid.Column="{Binding FridayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsFridayShown}" />
-                <Label Text="Lørdag" Grid.Column="{Binding SaturdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSaturdayShown}" />
-                <Label Text="Søndag" Grid.Column="{Binding SundayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSundayShown}" />
+                <Grid ColumnSpan="7">
+                    <Label Text="Mandag" Grid.Column="{Binding MondayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsMondayShown}" />
+                    <Label Text="Tirsdag" Grid.Column="{Binding TuesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsTuesdayShown}" />
+                    <Label Text="Onsdag" Grid.Column="{Binding WednesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsWednesdayShown}" />
+                    <Label Text="Torsdag" Grid.Column="{Binding ThursdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsThursdayShown}" />
+                    <Label Text="Fredag" Grid.Column="{Binding FridayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsFridayShown}" />
+                    <Label Text="Lørdag" Grid.Column="{Binding SaturdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSaturdayShown}" />
+                    <Label Text="Søndag" Grid.Column="{Binding SundayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsSundayShown}" />
+                </Grid>
                 <!-- WEEKDAY LISTS -->
                 <ScrollView Grid.Row="1" Grid.ColumnSpan="7">
                     <!-- HACK: The HeightRequest is set to make the Grid's height larger
