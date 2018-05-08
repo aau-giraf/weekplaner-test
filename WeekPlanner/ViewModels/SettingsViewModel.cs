@@ -138,7 +138,7 @@ namespace WeekPlanner.ViewModels
                     _shownDays = value;
                 }
                 RaisePropertyChanged(() => LimitNumberofActivities);
-                //Settings.NrOfDaysToDisplay = _shownDays; //Todo Find a way to add to the database without crashing
+                Settings.NrOfDaysToDisplay = _shownDays; //Todo Find a way to add to the database without crashing
             }
         }
         public bool LimitNumberofActivities => (NumberOfShownDaysAtOnce == 1);
@@ -166,7 +166,7 @@ namespace WeekPlanner.ViewModels
                 {
                     _activitiesshown = 30;
                 }
-                //Settings.ActivitiesCount = _activitiesshown; //Todo Find a way to add to the database without crashing
+                Settings.ActivitiesCount = _activitiesshown; //Todo Find a way to add to the database without crashing
             }
         }
     }

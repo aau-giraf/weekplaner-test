@@ -126,7 +126,7 @@ namespace WeekPlanner.ViewModels
 
         private async Task GetUserSettingsForCitizenAsync()
         {
-            _settingsService.UseTokenFor(UserType.Citizen);
+            SettingsService.UseTokenFor(UserType.Citizen);
 
             await _requestService.SendRequestAndThenAsync(
                 requestAsync: () => _userApi.V1UserSettingsGetAsync(),
