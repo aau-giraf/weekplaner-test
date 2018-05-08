@@ -17,6 +17,7 @@ using Xamarin.Forms;
 using static IO.Swagger.Model.WeekdayDTO;
 using WeekPlanner.Services;
 using WeekPlanner.Helpers;
+using Xamarin.Forms.Internals;
 
 namespace WeekPlanner.ViewModels
 {
@@ -77,6 +78,8 @@ namespace WeekPlanner.ViewModels
             }
         }
 
+
+
         public ICommand ToggleEditModeCommand => new Command(async () => await SwitchUserModeAsync());
 
         public ICommand SaveCommand => new Command(async () => await SaveSchedule());
@@ -127,6 +130,8 @@ namespace WeekPlanner.ViewModels
                 (sender) => SetToGuardianMode());
         }
 
+        
+
         public override async Task InitializeAsync(object navigationData)
         {
             if (navigationData is Tuple<int?, int?> weekYearAndNumber)
@@ -137,6 +142,8 @@ namespace WeekPlanner.ViewModels
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
+
+            SetOrientation();
         }
 
 
@@ -375,12 +382,25 @@ namespace WeekPlanner.ViewModels
                         IsBusy = false;
                         break;
                 }
+                MessagingCenter.Send(this, "SetOrientation", "Landscape");
             }
+            
         }
 
         // TODO: Override the navigation bar backbutton when this is available.
         // Will most likely only be available if/when the custom navigation bar gets implemented.
 
+        public void SetOrientation()
+        {
+            if (RemainingDaysShown == 1)
+            {
+                MessagingCenter.Send(this, "SetOrientation", "Portrait");
+            }
+            else
+            {
+                MessagingCenter.Send(this, "SetOrientation", "Landscape");
+            }
+        } 
 
         private int NumberOfDaysShown => UserSettings?.Data.NrOfDaysToDisplay ?? 7;
         public int RemainingDaysShown
@@ -392,10 +412,12 @@ namespace WeekPlanner.ViewModels
                 {
                     return NumberOfDaysShown - (NumberOfDaysShown + (int)currentDay - 7);
                 }
-
+                
                 return NumberOfDaysShown;
             }
         }
+
+       
 
         private DayEnum GetWeekDay(DayOfWeek day)
         {
