@@ -111,6 +111,8 @@ namespace WeekPlanner.ViewModels
             MessagingCenter.Subscribe<LoginViewModel>(this, MessageKeys.LoginSucceeded, sender => SetToGuardianMode());
         }
 
+        
+
         public override async Task InitializeAsync(object navigationData)
         {
             if (navigationData is Tuple<int?, int?> weekYearAndNumber)
@@ -121,6 +123,8 @@ namespace WeekPlanner.ViewModels
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
+
+            SetOrientation();
         }
 
 
@@ -361,6 +365,7 @@ namespace WeekPlanner.ViewModels
                         await NavigationService.PopAsync();
                         break;
                 }
+                MessagingCenter.Send(this, "SetOrientation", "Landscape");
             }
 
             IsBusy = false;
@@ -386,8 +391,22 @@ namespace WeekPlanner.ViewModels
                 default:
                     throw new NotSupportedException("DayEnum out of bounds");
             }
-                                
-        }
+}
+
+        // TODO: Override the navigation bar backbutton when this is available.
+        // Will most likely only be available if/when the custom navigation bar gets implemented.
+
+        public void SetOrientation()
+        {
+            if (RemainingDaysShown == 1)
+            {
+                MessagingCenter.Send(this, "SetOrientation", "Portrait");
+            }
+            else
+            {
+                MessagingCenter.Send(this, "SetOrientation", "Landscape");
+            }
+        } 
 
         private int NumberOfDaysShown => UserSettings?.Data.NrOfDaysToDisplay ?? 7;
         public int RemainingDaysShown
@@ -399,10 +418,12 @@ namespace WeekPlanner.ViewModels
                 {
                     return NumberOfDaysShown - (NumberOfDaysShown + (int)currentDay - 7);
                 }
-
+                
                 return NumberOfDaysShown;
             }
         }
+
+       
 
         private DayEnum GetWeekDay(DayOfWeek day)
         {
