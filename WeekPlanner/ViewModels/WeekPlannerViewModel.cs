@@ -25,6 +25,7 @@ namespace WeekPlanner.ViewModels
         private readonly IRequestService _requestService;
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
+        private readonly IPictogramApi _pictogramApi;
         public ISettingsService SettingsService { get; }
         private bool _isDirty = false;
 
@@ -85,13 +86,15 @@ namespace WeekPlanner.ViewModels
             IRequestService requestService,
             IWeekApi weekApi,
             IDialogService dialogService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IPictogramApi pictogramApi)
             : base(navigationService)
         {
             _requestService = requestService;
             _weekApi = weekApi;
             _dialogService = dialogService;
             _requestService = requestService;
+            _pictogramApi = pictogramApi;
             SettingsService = settingsService;
 
             OnBackButtonPressedCommand = new Command(async () => await BackButtonPressed());
