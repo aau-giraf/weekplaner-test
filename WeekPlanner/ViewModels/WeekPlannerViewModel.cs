@@ -230,6 +230,21 @@ namespace WeekPlanner.ViewModels
                 {
                     await UpdateExistingSchedule();
                 }
+            } else if (navigationData is ObservableCollection<ActivityDTO> activitiesq)
+            {
+                int? order = activitiesq.First().Order;
+                DayEnum? dayEnum = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
+
+                WeekDTO.Days.First(d => d.Day == dayEnum).Activities.RemoveAll(a => a.Order == order);
+
+                foreach (var item in activitiesq)
+                {
+                    WeekDTO.Days.First(d => d.Day == dayEnum).Activities.Add(item);
+                }
+                _isDirty = true;
+                RaisePropertyForDays();
+
+                
             }
             // Happens after logging in as guardian when switching to guardian mode
             if (navigationData is bool enterGuardianMode)

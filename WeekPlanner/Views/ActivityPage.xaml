@@ -17,11 +17,12 @@
             <StackLayout>
                 <Grid VerticalOptions="CenterAndExpand">
                     <!--Left Side-->
-                    <StackLayout Grid.Column="0"
+                    <StackLayout 
                              VerticalOptions="Center">
                         <ffimageloading:CachedImage Source="{Binding Activity.Pictogram.Id, Converter={StaticResource IdToRawPictoUrlConverter}}" />
                         <Grid Padding="30" IsVisible="{Binding IsGuardianMode}">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
@@ -37,6 +38,10 @@
                             <Button Grid.Column="2"
                                 Text="Slet"
                                 Command="{Binding DeleteActivityCommand}"
+                                IsVisible="{Binding SettingsService.IsInGuardianMode}" />
+                            <Button Grid.Column="3"
+                                Text="Lav Choice-Board"
+                                Command="{Binding ChoiceBoardCommand}"
                                 IsVisible="{Binding SettingsService.IsInGuardianMode}" />
                         </Grid>
                     </StackLayout>
