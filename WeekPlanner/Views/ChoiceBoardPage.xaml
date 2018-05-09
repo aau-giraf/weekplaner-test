@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+             xmlns:converters1="clr-namespace:WeekPlanner.Converters;assembly=WeekPlanner"
+             x:Class="WeekPlanner.Views.ChoiceBoardPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid VerticalOptions="CenterAndExpand">
+                <!--Left Side-->
+                <StackLayout Grid.Column="0"
+                             VerticalOptions="Center">
+                    <flv:FlowListView
+                    SeparatorVisibility="None"
+                    HasUnevenRows="true"
+                    FlowItemTappedCommand="{Binding WeekTappedCommand}"
+                    FlowColumnMinWidth="210"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource NegateBooleanConverter}}"
+                    FlowItemsSource="{Binding Pictograms}">
+                        <flv:FlowListView.FlowColumnTemplate>
+                            <DataTemplate>
+                                <Grid Padding="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition
+                                        Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition
+                                        Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ffimageloading:CachedImage
+                                    HeightRequest="200"
+                                    Aspect="AspectFit"
+                                    LoadingPlaceholder="image_loading.png"
+                                    ErrorPlaceholder="weekschedule.png"
+                                    Source="{Binding Pictograms.Id, Converter={StaticResource IdToRawPictoUrlConverter}}"
+                                    BackgroundColor="White"/>
+                                </Grid>
+                            </DataTemplate>
+                        </flv:FlowListView.FlowColumnTemplate>
+                    </flv:FlowListView>
+
+                    <ffimageloading:CachedImage Source="{Binding Activity.Pictogram.Id, Converter={StaticResource IdToRawPictoUrlConverter}}" />
+                    <Grid Padding="30" IsVisible="{Binding IsGuardianMode}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                Text="Ændre"
+                                Command="{Binding ChangePictoCommand}"
+                                IsVisible="{Binding SettingsService.IsInGuardianMode}" />
+                        <Button Grid.Column="1"
+                                Text="{Binding FriendlyStateString}"
+                                Command="{Binding ToggleStateCommand}"
+                                BackgroundColor="{Binding State, Converter={StaticResource StateToBackgroundColorConverter}}"/>
+                        <Button Grid.Column="2"
+                                Text="Slet"
+                                Command="{Binding DeleteActivityCommand}"
+                                IsVisible="{Binding SettingsService.IsInGuardianMode}" />
+                    </Grid>
+                </StackLayout>
+            </Grid>
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="Center"
+                         Padding="12"
+                         VerticalOptions="End">
+                <Button Text="Gem"
+                        WidthRequest="300"
+                        Command="{Binding SaveCommand}" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
