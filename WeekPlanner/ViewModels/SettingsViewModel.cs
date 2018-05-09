@@ -123,7 +123,7 @@ namespace WeekPlanner.ViewModels
 
         public int NumberOfShownDaysAtOnce
         {
-            get => (int)Settings.NrOfDaysToDisplay;
+            get => Settings.NrOfDaysToDisplay ?? 7;
             set
             {
                 Settings.NrOfDaysToDisplay = value;

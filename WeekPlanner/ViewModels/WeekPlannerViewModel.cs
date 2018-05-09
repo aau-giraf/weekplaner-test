@@ -428,9 +428,9 @@ namespace WeekPlanner.ViewModels
         public bool IsDayShown(DayEnum day)
         {
             DayEnum currentDay = GetWeekDay(DateTime.Today.DayOfWeek);
-            if (day < currentDay)
+            if ((int)currentDay + NumberOfDaysShown > 6)
             {
-                return false;
+                return (int)day > 6 - NumberOfDaysShown;
             }
             return currentDay + NumberOfDaysShown > day;
         }
