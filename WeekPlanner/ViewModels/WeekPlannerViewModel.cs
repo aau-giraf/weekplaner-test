@@ -26,7 +26,6 @@ namespace WeekPlanner.ViewModels
         private readonly IWeekApi _weekApi;
         private readonly IDialogService _dialogService;
         public ISettingsService SettingsService { get; }
-        private readonly IUserApi _userApi;
 
         private ActivityDTO _selectedActivity;
         private bool _editModeEnabled;
@@ -34,6 +33,7 @@ namespace WeekPlanner.ViewModels
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _toolbarButtonIcon;
         private ResponseSettingDTO _userSettings;
+        public SettingDTO SettingsCurrentCitizen;
 
         public WeekDTO WeekDTO
         {
@@ -46,15 +46,7 @@ namespace WeekPlanner.ViewModels
             }
         }
 
-        public ResponseSettingDTO UserSettings
-        {
-            get => _userSettings;
-            set
-            {
-                _userSettings = value;
-                RaisePropertyChanged(() => _userSettings);
-            }
-        }
+        
 
         public ImageSource ToolbarButtonIcon
         {
@@ -94,8 +86,7 @@ namespace WeekPlanner.ViewModels
             IRequestService requestService, 
             IWeekApi weekApi, 
             IDialogService dialogService, 
-            ISettingsService settingsService,
-            IUserApi userApi)
+            ISettingsService settingsService)
             : base(navigationService)
         {
             _requestService = requestService;
@@ -103,7 +94,9 @@ namespace WeekPlanner.ViewModels
             _dialogService = dialogService;
             _requestService = requestService;
             SettingsService = settingsService;
-            _userApi = userApi;
+            SettingsCurrentCitizen = SettingsService.CurrentCitizenSettingDTO;
+            
+
 
             OnBackButtonPressedCommand = new Command(async () => await BackButtonPressed());
             ShowToolbarButton = true;
@@ -123,20 +116,12 @@ namespace WeekPlanner.ViewModels
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
-
+            
             SetOrientation();
         }
 
 
-        private async Task GetUserSettingsForCitizenAsync()
-        {
-            SettingsService.UseTokenFor(UserType.Citizen);
-
-            await _requestService.SendRequestAndThenAsync(
-                requestAsync: () => _userApi.V1UserSettingsGetAsync(),
-                onSuccess: result => { UserSettings = result; }
-            );
-        }
+       
 
         // TODO: Handle situation where no days exist
         private async Task GetWeekPlanForCitizenAsync(Tuple<int?, int?> weekYearAndNumber)
@@ -398,7 +383,7 @@ namespace WeekPlanner.ViewModels
 
         public void SetOrientation()
         {
-            if (RemainingDaysShown == 1)
+            if (NumberOfDaysShown == 1)
             {
                 MessagingCenter.Send(this, "SetOrientation", "Portrait");
             }
@@ -408,8 +393,8 @@ namespace WeekPlanner.ViewModels
             }
         } 
 
-        private int NumberOfDaysShown => UserSettings?.Data.NrOfDaysToDisplay ?? 7;
-        public int RemainingDaysShown
+        private int NumberOfDaysShown => SettingsCurrentCitizen.NrOfDaysToDisplay ?? 7;
+        /*public int RemainingDaysShown
         {
             get
             {
@@ -421,7 +406,7 @@ namespace WeekPlanner.ViewModels
                 
                 return NumberOfDaysShown;
             }
-        }
+        }*/
 
        
 
@@ -485,7 +470,7 @@ namespace WeekPlanner.ViewModels
         public ObservableCollection<ActivityDTO> SaturdayPictos => GetPictosOrEmptyList(DayEnum.Saturday);
         public ObservableCollection<ActivityDTO> SundayPictos => GetPictosOrEmptyList(DayEnum.Sunday);
 
-        public int NumberOfActivitiesshown => UserSettings?.Data.ActivitiesCount ?? 30;
+        public int NumberOfActivitiesshown => SettingsCurrentCitizen.ActivitiesCount ?? 30;
 
         public List<WeekdayDTO> Adjustedweek()
         {
