@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IO.Swagger.Api;
@@ -30,6 +31,33 @@ namespace WeekPlanner.ViewModels
                 RaisePropertyChanged(() => GirafCitizen);
             }
         }
+        private IEnumerable<SettingDTO.CompleteMarkEnum> _completeMarks = new List<SettingDTO.CompleteMarkEnum>(){
+            SettingDTO.CompleteMarkEnum.Checkmark, SettingDTO.CompleteMarkEnum.Removed /*, SettingDTO.CompleteMarkEnum.MovedRight */
+        };
+        public IEnumerable<SettingDTO.CompleteMarkEnum> CompleteMarks => _completeMarks;
+
+        public SettingDTO.CompleteMarkEnum SelectedCompleteMark
+        {
+            get 
+            { 
+                if(_settings == null)
+                { 
+                    return SettingDTO.CompleteMarkEnum.Checkmark; 
+                } 
+                return _settings.CompleteMark; 
+            }
+            set
+            {
+                if (_settings != null)
+                {
+                    _settings.CompleteMark = value;
+                    RaisePropertyChanged(() => SelectedCompleteMark);
+                    UpdateSettingsAsync();
+                }
+            }
+        }
+
+
 
         private bool _orientationSlider;
         public bool OrientationSwitch
@@ -70,7 +98,6 @@ namespace WeekPlanner.ViewModels
                 onSuccess: dto => { });
         }
         
-        
         private SettingDTO.OrientationEnum _orientationSetting;
         private SettingDTO _settings;
         
@@ -83,8 +110,6 @@ namespace WeekPlanner.ViewModels
                 RaisePropertyChanged(() => Settings);
             }
         }
-
-
 
         public SettingsViewModel(ISettingsService settingsService, INavigationService navigationService, 
             IDialogService dialogService, IRequestService requestService, IUserApi userApi) : base(navigationService)

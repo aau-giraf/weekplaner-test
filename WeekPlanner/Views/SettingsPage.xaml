@@ -15,6 +15,17 @@
                 
                 <!--Different completion mark-->
 
+                <TableSection Title="Vælg Aktivitet Fuldført markør">
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout Orientation="Horizontal" Padding="15, 0">
+                                <Label Text="Fuldført Markører" VerticalOptions="Center"></Label>
+                                <Picker Title="Vælg en Markør" ItemsSource="{Binding CompleteMarks}" SelectedItem="{Binding SelectedCompleteMark}"/>
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </TableSection>
+                
                 <!--Orientation lock-->
                 <TableSection Title="Orienterings lås">
                     <ViewCell>
