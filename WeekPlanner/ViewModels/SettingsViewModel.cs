@@ -24,7 +24,8 @@ namespace WeekPlanner.ViewModels
 
         public WeekdayColors WeekdayColors { get; set; }
 
-        private IEnumerable<SettingDTO.ThemeEnum> _themes = new List<SettingDTO.ThemeEnum>(){
+        public IEnumerable<SettingDTO.ThemeEnum> Themes { get; } = new List<SettingDTO.ThemeEnum>
+        {
             SettingDTO.ThemeEnum.AndroidBlue, SettingDTO.ThemeEnum.GirafGreen, SettingDTO.ThemeEnum.GirafRed, SettingDTO.ThemeEnum.GirafYellow
         };
 
@@ -58,6 +59,11 @@ namespace WeekPlanner.ViewModels
                 RaisePropertyChanged(() => ThemeSelected);
             }
         }
+        public string CitizenName
+        {
+            get { return _settingsService.CurrentCitizenName; }
+        }
+
 
         private void SetThemeInSettingDTOAndUpdate(SettingDTO.ThemeEnum pickedTheme)
         {
@@ -113,10 +119,13 @@ namespace WeekPlanner.ViewModels
             _settingsService = settingsService;
             _requestService = requestService;
             _userApi = userApi;
+        }
 
+        public async override Task InitializeAsync(object navigationData)
+        {
             WeekdayColors = new WeekdayColors(_settingsService.CurrentCitizenSettingDTO);
             // Update settings regardless of which property calls 'RaisePropertyChanged'
-            WeekdayColors.PropertyChanged += (sender, e) => UpdateSettingsAsync();
+            WeekdayColors.PropertyChanged += async (sender, e) => await UpdateSettingsAsync();
         }
 
         public IEnumerable<int> NumDaysShownList => Enumerable.Range(1, 7);

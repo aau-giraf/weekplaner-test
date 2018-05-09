@@ -5,8 +5,8 @@
              x:Class="WeekPlanner.App">
     <Application.Resources>
         <ResourceDictionary>
+            
             <!--COLORS-->
-
             <Color x:Key="MondayColor">#067700</Color>
             <Color x:Key="TuesdayColor">#8c1086</Color>
             <Color x:Key="WednesdayColor">#ff7f00</Color>
@@ -49,16 +49,6 @@
                 x:Key="GreenThemeColor">#007E33</Color>
             <Color
                 x:Key="NavBarColor">#33b5e5</Color>
-            
-            <!--Layouts-->
-
-            <!--<Style TargetType="ContentPage">
-                <Setter Property="BackgroundColor" Value="{StaticResource White}" />
-            </Style>-->
-
-            <!--<Style TargetType="ContentPage.ToolbarItems">
-                <Setter Property="BackgroundColor" Value="{staticResource White}" />
-            </Style>-->
 
             <Style TargetType="views:CustomNavigationPage">
                 <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
@@ -70,25 +60,26 @@
                 <Setter Property="TextColor"
                         Value="{StaticResource ErrorColor}" />
             </Style>
-
-            <!--<Style TargetType="Label">
-                
+            <Style x:Key="NavBarLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value="{StaticResource WhiteColor}" />
+                <Setter Property="HorizontalOptions"
+                        Value="CenterAndExpand" />
+                <Setter Property="VerticalOptions"
+                        Value="Center" />
+                <Setter Property="FontSize"
+                        Value="20" />
             </Style>
 
-            <Style TargetType="SearchBar">
-
-            </Style>
--->
             <Style TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
-                <!--<Setter Property="Margin" Value="20" />
-                <Setter Property="VerticalOptions" Value="CenterAndExpand" />-->
-                <Setter Property="TextColor" Value="White" />
-
+                <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
             </Style>
 
             <!-- CONVERTERS -->
             <converters:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter" />
+            <converters:CitizenToSettingsTitle x:Key="CitizenToSettingsTitle" />
             <converters:ItemsToHeightConverter x:Key="ItemsToHeightConverter" />
             <converters:NegateBooleanConverter x:Key="NegateBooleanConverter" />
             <converters:IdToRawPictoUrlConverter x:Key="IdToRawPictoUrlConverter" />
@@ -115,14 +106,21 @@
                         
                         <!-- Back Button -->
                         <Image 
-                            HorizontalOptions="StartAndExpand" 
+                            HorizontalOptions="Start" 
                             VerticalOptions="Center"
                             IsVisible="{TemplateBinding Parent.BindingContext.ShowBackButton}"
                             HeightRequest="30" Source="icon_left_arrow.png">
                             <Image.GestureRecognizers>
-                                <TapGestureRecognizer Command="{TemplateBinding Parent.BindingContext.OnBackButtonPressedCommand}" />
+                                <TapGestureRecognizer Command="{TemplateBinding Parent.BindingContext.OnBackButtonPressedCommand}"  />
                             </Image.GestureRecognizers>
                         </Image>
+                        <Label 
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontSize="22"
+                               TextColor="White"
+                               Text="{TemplateBinding Parent.Title}"></Label>
                     </StackLayout>
                     <!-- End Header -->
                      
@@ -156,7 +154,7 @@
                         
                         <!-- Back Button -->
                         <Image 
-                                HorizontalOptions="StartAndExpand" 
+                                HorizontalOptions="Start" 
                                 VerticalOptions="Center"
                                 IsVisible="{TemplateBinding Parent.BindingContext.ShowBackButton}"
                                 HeightRequest="30" Source="icon_left_arrow.png">
@@ -164,10 +162,17 @@
                                 <TapGestureRecognizer Command="{TemplateBinding Parent.BindingContext.OnBackButtonPressedCommand}" />
                             </Image.GestureRecognizers>
                         </Image>
+                        <Label 
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontSize="22"
+                               TextColor="White"
+                               Text="{TemplateBinding Parent.Title}"></Label>
                         
                         <!-- Toolbar Button -->
                         <Image 
-                            HorizontalOptions="EndAndExpand" 
+                            HorizontalOptions="End" 
                             VerticalOptions="Center"
                             IsVisible="{TemplateBinding Parent.BindingContext.ShowToolbarButton}"
                             HeightRequest="30" Source="{TemplateBinding Parent.BindingContext.ToolbarButtonIcon}">
@@ -207,7 +212,7 @@
                         
                         <!-- Back Button -->
                         <Image 
-                                HorizontalOptions="StartAndExpand" 
+                                HorizontalOptions="Start" 
                                 VerticalOptions="Center"
                                 IsVisible="{TemplateBinding Parent.BindingContext.ShowBackButton}"
                                 HeightRequest="30" Source="icon_left_arrow.png">
@@ -215,10 +220,17 @@
                                 <TapGestureRecognizer Command="{TemplateBinding Parent.BindingContext.OnBackButtonPressedCommand}" />
                             </Image.GestureRecognizers>
                         </Image>
+                        <Label 
+                               HorizontalOptions="CenterAndExpand"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontSize="22"
+                               TextColor="White"
+                               Text="{TemplateBinding Parent.Title}"></Label>
                         
                         <!-- Toolbar Button -->
                         <Image 
-                            HorizontalOptions="EndAndExpand" 
+                            HorizontalOptions="End" 
                             VerticalOptions="Center"
                             IsVisible="{TemplateBinding Parent.BindingContext.ShowToolbarButton}"
                             HeightRequest="30" Source="{TemplateBinding Parent.BindingContext.ToolbarButtonIcon}">
