@@ -99,7 +99,7 @@ namespace WeekPlanner.ViewModels
         });
 
 
-        private async Task UpdateSettingsAsync()
+        private async void UpdateSettingsAsync()
         {
             _settingsService.UseTokenFor(UserType.Citizen);
             await _requestService.SendRequest(_userApi.V1UserSettingsPatchAsync(Settings));
@@ -119,54 +119,32 @@ namespace WeekPlanner.ViewModels
             WeekdayColors.PropertyChanged += (sender, e) => UpdateSettingsAsync();
         }
 
-        private int _shownDays = 7;
+        public IEnumerable<int> NumDaysShownList => Enumerable.Range(1, 7);
+
         public int NumberOfShownDaysAtOnce
         {
-            get => _shownDays;
+            get => (int)Settings.NrOfDaysToDisplay;
             set
             {
-                if (value < 1)
-                {
-                    _shownDays = 1;
-                }
-                else if (value > 7)
-                {
-                    _shownDays = 7;
-                }
-                else
-                {
-                    _shownDays = value;
-                }
+                Settings.NrOfDaysToDisplay = value;
                 RaisePropertyChanged(() => LimitNumberofActivities);
-                Settings.NrOfDaysToDisplay = _shownDays; //Todo Find a way to add to the database without crashing
+                UpdateSettingsAsync();
             }
         }
+
         public bool LimitNumberofActivities => (NumberOfShownDaysAtOnce == 1);
-        private int _activitiesshown;
+
         public string ActivitiesShown
         {
-            get => _activitiesshown.ToString();
+            get => Settings.ActivitiesCount == null ? "Alle" : Settings.ActivitiesCount.ToString();
             set
             {
-                bool isdig = int.TryParse(value, out int temp);
-                if (isdig)
-                {
-
-                    if (temp < 1)
-                    {
-                        _activitiesshown = 1;
-                    }
-                    else
-                    {
-                        _activitiesshown = temp;
-                    }
-
+                if(value == "Alle") {
+                    Settings.ActivitiesCount = null;
+                } else {
+                    Settings.ActivitiesCount = int.Parse(value);
                 }
-                else
-                {
-                    _activitiesshown = 30;
-                }
-                Settings.ActivitiesCount = _activitiesshown; //Todo Find a way to add to the database without crashing
+                UpdateSettingsAsync();
             }
         }
     }
