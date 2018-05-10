@@ -150,6 +150,11 @@ namespace WeekPlanner.ViewModels
                 }
             );
 
+            FoldDaysToChoiceBoards();
+        }
+
+        private void FoldDaysToChoiceBoards()
+        {
             foreach (var days in WeekDTO.Days)
             {
                 DayEnum? day = days.Day;
@@ -170,10 +175,17 @@ namespace WeekPlanner.ViewModels
                 foreach (var item in orderOfChoiceBoards)
                 {
                     days.Activities.RemoveAll(d => d.Order == item);
-                    days.Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, item, StateEnum.Normal) { IsChoiceBoard = true});
+                    days.Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, item, StateEnum.Normal) { IsChoiceBoard = true });
                 }
             }
 
+            SetWeekOrdering();
+
+            RaisePropertyForDays();
+        }
+
+        private void SetWeekOrdering()
+        {
             WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
         }
 
@@ -184,7 +196,15 @@ namespace WeekPlanner.ViewModels
             {
                 // Insert pictogram in the very bottom of the day
                 var newOrderInBottom = dayToAddTo.Activities.Max(d => d.Order) + 1;
-                dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom, StateEnum.Normal));
+                if (newOrderInBottom == null)
+                {
+                    dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, 0, StateEnum.Normal));
+                }
+                else
+                {
+                    dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom, StateEnum.Normal));
+                }
+                
                 _isDirty = true;
                 RaisePropertyForDays();
             }
@@ -248,6 +268,7 @@ namespace WeekPlanner.ViewModels
                     _dialogService.ShowAlertAsync(message: $"Ugeplanen '{result.Data.Name}' blev oprettet og gemt.");
                     _isDirty = false;
                 });
+            FoldDaysToChoiceBoards();
         }
 
         private async Task UpdateExistingSchedule()
@@ -263,6 +284,8 @@ namespace WeekPlanner.ViewModels
                     _dialogService.ShowAlertAsync(message: $"Ugeplanen '{result.Data.Name}' blev gemt.");
                     _isDirty = false;
                  });
+
+            FoldDaysToChoiceBoards();
         }
 
         public override async Task PoppedAsync(object navigationData)
@@ -322,6 +345,11 @@ namespace WeekPlanner.ViewModels
                 WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Activities.Remove(_selectedActivity);
 
                 WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
+                if (!SettingsService.IsInGuardianMode)
+                {
+                    await SaveOrUpdateSchedule();
+                }
+
                 RaisePropertyForDays();
             }
             else
@@ -337,7 +365,9 @@ namespace WeekPlanner.ViewModels
                 }
                 WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Activities.Remove(_selectedActivity);
                 WeekDTO.Days.Single(d => d.Day == dayEnum).Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, order, StateEnum.Normal) { IsChoiceBoard = true});
-                
+
+                WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
+
                 _isDirty = true;
                 RaisePropertyForDays();
             }
@@ -364,10 +394,6 @@ namespace WeekPlanner.ViewModels
 
                     case "Gem ændringer":
                         await SaveOrUpdateSchedule();
-                        if (WeekDTO.WeekNumber != null)
-                        {
-                            await GetWeekPlanForCitizenAsync(new Tuple<int?, int?>(WeekDTO.WeekYear, WeekDTO.WeekNumber));
-                        }
                         SetToCitizenMode();
                         break;
 
@@ -525,6 +551,7 @@ namespace WeekPlanner.ViewModels
         private async Task SaveOrUpdateSchedule()
         {
             PutChoiceActivitiesBackIntoSchedule();
+
             if (WeekDTO.WeekNumber is null)
             {
                 await SaveNewSchedule();
