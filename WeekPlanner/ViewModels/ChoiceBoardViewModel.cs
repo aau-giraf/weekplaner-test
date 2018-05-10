@@ -89,7 +89,7 @@ namespace WeekPlanner.ViewModels
 
         private void SaveChoiceBoard()
         {
-            NavigationService.PopAsync(_activityDTOs);
+            NavigationService.PopAsync(ActivityDTOs);
         }
 
         public override async Task PoppedAsync(object navigationData)
