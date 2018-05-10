@@ -30,11 +30,11 @@ namespace WeekPlanner.ViewModels
         private bool _isDirty = false;
 
         private ActivityDTO _selectedActivity;
-        private bool _editModeEnabled;
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _toolbarButtonIcon;
-
+        private WeekDTO _weekForChoiceBoards = new WeekDTO();
+        private WeekPictogramDTO _standardChoiceBoardPictoDTO;
         public WeekDTO WeekDTO
         {
             get => _weekDto;
@@ -106,6 +106,7 @@ namespace WeekPlanner.ViewModels
         {
             if (navigationData is Tuple<int?, int?> weekYearAndNumber)
             {
+                _standardChoiceBoardPictoDTO = PictoToWeekPictoDtoHelper.Convert(_pictogramApi.V1PictogramByIdGet(2).Data);
                 await GetWeekPlanForCitizenAsync(weekYearAndNumber);
             }
             else
@@ -127,10 +128,41 @@ namespace WeekPlanner.ViewModels
                 }
             );
 
-            foreach (var days in WeekDTO.Days)
-            {
-                days.Activities = days.Activities.OrderBy(a => a.Order).ToList();
-            }
+
+
+            //foreach (var days in WeekDTO.Days)
+            //{
+            //    DayEnum? day = days.Day;
+            //    List<int?> orderOfChoiceBoards = new List<int?>();
+
+            //    foreach (var a in days.Activities.GroupBy(d => d.Order, d => d))
+            //    {
+            //        if (a.Count() > 1)
+            //        {
+            //            foreach (var item in a)
+            //            {
+            //                _weekForChoiceBoards.Days.First(d => d.Day == day).Activities.Add(item);
+            //            }
+            //            orderOfChoiceBoards.Add(a.Key);
+            //        }
+            //        else
+            //        {
+            //            days.Activities.Add(a.First());
+            //        }
+            //    }
+
+            //    foreach (var item in orderOfChoiceBoards)
+            //    {
+            //        days.Activities.RemoveAll(d => d.Order == item);
+            //        days.Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, item, StateEnum.Normal));
+            //    }
+            //}
+
+
+            //foreach (var days in WeekDTO.Days)
+            //{
+            //    days.Activities = days.Activities.OrderBy(a => a.Order).ToList();
+            //}
         }
 
         private void InsertPicto(WeekPictogramDTO pictogramDTO)
@@ -144,6 +176,14 @@ namespace WeekPlanner.ViewModels
                 _isDirty = true;
                 RaisePropertyForDays();
             }
+        }
+
+        private void DeleteChoiceBoardAsync()
+        {
+            DayEnum? day = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
+            int? order = _selectedActivity.Order;
+
+            _weekForChoiceBoards.Days.Single(d => d.Day == day).Activities.RemoveAll(a => a.Order == order);
         }
 
 
@@ -230,26 +270,44 @@ namespace WeekPlanner.ViewModels
                 {
                     await UpdateExistingSchedule();
                 }
-            } else if (navigationData is ObservableCollection<ActivityDTO> activitiesq)
+            } else if (navigationData is ObservableCollection<ActivityDTO> activities)
             {
-                int? order = activitiesq.First().Order;
-                DayEnum? dayEnum = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
-
-                WeekDTO.Days.First(d => d.Day == dayEnum).Activities.RemoveAll(a => a.Order == order);
-
-                foreach (var item in activitiesq)
-                {
-                    WeekDTO.Days.First(d => d.Day == dayEnum).Activities.Add(item);
-                }
-                _isDirty = true;
-                RaisePropertyForDays();
-
-                
+                await HandleChoiceBoardAsync(activities);
             }
             // Happens after logging in as guardian when switching to guardian mode
             if (navigationData is bool enterGuardianMode)
             {
                 SetToGuardianMode();
+            }
+        }
+
+        private async Task HandleChoiceBoardAsync(ObservableCollection<ActivityDTO> activities)
+        {
+            if (activities.Count == 0)
+            {
+                DeleteChoiceBoardAsync();
+                await InitializeAsync(null);
+            }
+            else if (activities.Count == 1)
+            {
+                DeleteChoiceBoardAsync();
+                await InitializeAsync(activities.First());
+            }
+            else
+            {
+                
+                int? order = activities.First().Order;
+                DayEnum? dayEnum = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
+
+                _weekForChoiceBoards.Days.First(d => d.Day == dayEnum).Activities.RemoveAll(a => a.Order == order);
+
+                foreach (var item in activities)
+                {
+                    _weekForChoiceBoards.Days.First(d => d.Day == dayEnum).Activities.Add(item);
+                }
+                _selectedActivity = new ActivityDTO(_standardChoiceBoardPictoDTO, order, StateEnum.Normal);
+                _isDirty = true;
+                RaisePropertyForDays();
             }
         }
 
