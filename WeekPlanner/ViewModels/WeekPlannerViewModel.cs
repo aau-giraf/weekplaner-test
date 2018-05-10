@@ -161,7 +161,7 @@ namespace WeekPlanner.ViewModels
                     {
                         foreach (var item in a)
                         {
-                            _weekForChoiceBoards.Days.First(d => d.Day == day).Activities.Add(item);
+                            _weekForChoiceBoards.Days.Single(d => d.Day == day).Activities.Add(item);
                         }
                         orderOfChoiceBoards.Add(a.Key);
                     }

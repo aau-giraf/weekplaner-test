@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <base:PageBase 
-    xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
-    xmlns:converters1="clr-namespace:WeekPlanner.Converters;assembly=WeekPlanner"
-    xmlns:base="clr-namespace:WeekPlanner.Views.Base;assembly=WeekPlanner"
-    x:Class="WeekPlanner.Views.ChoiceBoardPage"
-    xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
-    Title="Choice Board"
-    x:Name="root">
+    >
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters1:StateToBackgroundColorConverter x:Key="StateToBackgroundColorConverter" />
@@ -93,7 +85,6 @@
                             Command="{Binding SaveChoiceCommand}" />
                     </Grid>
                 </StackLayout>
->>>>>>> d9a01ecb4a148296a28117eb99e63adea349ae32
             </StackLayout>
         </ContentView>
     </ContentPage.Content>
