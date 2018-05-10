@@ -59,9 +59,9 @@ namespace WeekPlanner.ViewModels
 
         public ICommand FlowItemTappedCommand => new Command(async (tappedItem) =>
         {
-            if (!SettingsService.IsInGuardianMode)
+            if (!SettingsService.IsInGuardianMode && tappedItem is ActivityDTO item)
             {
-                await NavigationService.NavigateToAsync<ActivityViewModel>(tappedItem);
+                await NavigationService.PopAsync(new ObservableCollection<ActivityDTO> { item});
             }
         });
 

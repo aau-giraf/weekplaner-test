@@ -174,10 +174,7 @@ namespace WeekPlanner.ViewModels
                 }
             }
 
-            foreach (var days in WeekDTO.Days)
-            {
-                days.Activities = days.Activities.OrderBy(a => a.Order).ToList();
-            }
+            WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
         }
 
         private void InsertPicto(WeekPictogramDTO pictogramDTO)
@@ -320,7 +317,12 @@ namespace WeekPlanner.ViewModels
             else if (activities.Count == 1)
             {
                 DeleteChoiceBoardAsync();
-                await InitializeAsync(activities.First());
+
+                WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Activities.Add(activities.First());
+                WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Activities.Remove(_selectedActivity);
+
+                WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
+                RaisePropertyForDays();
             }
             else
             {
@@ -362,6 +364,10 @@ namespace WeekPlanner.ViewModels
 
                     case "Gem ændringer":
                         await SaveOrUpdateSchedule();
+                        if (WeekDTO.WeekNumber != null)
+                        {
+                            await GetWeekPlanForCitizenAsync(new Tuple<int?, int?>(WeekDTO.WeekYear, WeekDTO.WeekNumber));
+                        }
                         SetToCitizenMode();
                         break;
 
@@ -400,6 +406,7 @@ namespace WeekPlanner.ViewModels
 
         private void SetToCitizenMode()
         {
+
             ShowBackButton = false;
             SettingsService.IsInGuardianMode = false;
             ToolbarButtonIcon = (FileImageSource)ImageSource.FromFile("icon_default_citizen.png");
