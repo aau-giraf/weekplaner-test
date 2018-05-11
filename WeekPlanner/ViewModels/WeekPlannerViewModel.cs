@@ -281,17 +281,18 @@ namespace WeekPlanner.ViewModels
             IsBusy = true;
             if (SettingsService.IsInGuardianMode)
             {
-				SetOrientation();
-
 				if (!_isDirty) {
                     SetToCitizenMode();
                     IsBusy = false;
-                    return;
+					SetOrientation();
+					return;
                 }
                 var result = await _dialogService.ActionSheetAsync("Der er ændringer der ikke er gemt. Vil du gemme?",
                     "Annuller", null, "Gem ændringer", "Gem ikke");
 
-                switch (result)
+				SetOrientation();
+
+				switch (result)
                 {
                     case "Annuller":
                         break;
