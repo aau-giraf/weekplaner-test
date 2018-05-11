@@ -33,20 +33,21 @@ namespace WeekPlanner.ViewModels
         private WeekDTO _weekDto;
         private DayEnum _weekdayToAddPictogramTo;
         private ImageSource _toolbarButtonIcon;
-        private WeekDTO _weekForChoiceBoards = new WeekDTO()
-        {
-            Days = new List<WeekdayDTO>()
-            {
-                new WeekdayDTO(DayEnum.Monday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Tuesday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Wednesday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Thursday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Friday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Saturday, new List<ActivityDTO>()),
-                new WeekdayDTO(DayEnum.Sunday, new List<ActivityDTO>())
-            },
+        private Dictionary<ActivityDTO, List<ActivityDTO>> _choiceBoardActivities = new Dictionary<ActivityDTO, List<ActivityDTO>>();
+        //private WeekDTO _weekForChoiceBoards = new WeekDTO()
+        //{
+        //    Days = new List<WeekdayDTO>()
+        //    {
+        //        new WeekdayDTO(DayEnum.Monday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Tuesday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Wednesday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Thursday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Friday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Saturday, new List<ActivityDTO>()),
+        //        new WeekdayDTO(DayEnum.Sunday, new List<ActivityDTO>())
+        //    },
             
-        };
+        //};
         private WeekPictogramDTO _standardChoiceBoardPictoDTO;
         public WeekDTO WeekDTO
         {
@@ -157,16 +158,16 @@ namespace WeekPlanner.ViewModels
         {
             foreach (var days in WeekDTO.Days)
             {
-                DayEnum? day = days.Day;
                 List<int?> orderOfChoiceBoards = new List<int?>();
-
+                List<ActivityDTO> choiceBoardItems = new List<ActivityDTO>();
+                ActivityDTO choiceBoard;
                 foreach (var a in days.Activities.GroupBy(d => d.Order, d => d))
                 {
                     if (a.Count() > 1)
                     {
                         foreach (var item in a)
                         {
-                            _weekForChoiceBoards.Days.Single(d => d.Day == day).Activities.Add(item);
+                            choiceBoardItems.Add(item);
                         }
                         orderOfChoiceBoards.Add(a.Key);
                     }
@@ -175,18 +176,20 @@ namespace WeekPlanner.ViewModels
                 foreach (var item in orderOfChoiceBoards)
                 {
                     days.Activities.RemoveAll(d => d.Order == item);
-                    days.Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, item, StateEnum.Normal) { IsChoiceBoard = true });
+                    choiceBoard = new ActivityDTO(_standardChoiceBoardPictoDTO, item, StateEnum.Normal) { IsChoiceBoard = true };
+                    days.Activities.Add(choiceBoard);
+                    _choiceBoardActivities.Add(choiceBoard, choiceBoardItems);
                 }
             }
 
             SetWeekOrdering();
-
-            RaisePropertyForDays();
         }
 
         private void SetWeekOrdering()
         {
             WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
+
+            RaisePropertyForDays();
         }
 
         private void InsertPicto(WeekPictogramDTO pictogramDTO)
@@ -205,24 +208,17 @@ namespace WeekPlanner.ViewModels
 
         private List<ActivityDTO> GetActivitiesForChoiceBoard()
         {
-            List<ActivityDTO> activities = new List<ActivityDTO>();
-
-            DayEnum? day = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
-
-            foreach (var item in _weekForChoiceBoards.Days.Single(d => d.Day == day).Activities.Where(a => a.Order == _selectedActivity.Order))
+            if (_choiceBoardActivities.TryGetValue(_selectedActivity, out List<ActivityDTO> activities))
             {
-                activities.Add(item);
+                return activities;
             }
 
-            return activities;
+            return null;
         }
 
         private void DeleteChoiceBoardAsync()
         {
-            DayEnum? day = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
-            int? order = _selectedActivity.Order;
-
-            _weekForChoiceBoards.Days.Single(d => d.Day == day).Activities.RemoveAll(a => a.Order == order);
+            _choiceBoardActivities.Remove(_selectedActivity);
         }
 
 
@@ -291,7 +287,7 @@ namespace WeekPlanner.ViewModels
             }
 
             // Happens when popping from ActivityViewModel
-            if (navigationData == null)
+            if (navigationData == null && navigationData is ActivityDTO)
             {
                 WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity))
                     .Activities
@@ -328,7 +324,13 @@ namespace WeekPlanner.ViewModels
             if (activities.Count == 0)
             {
                 DeleteChoiceBoardAsync();
-                await InitializeAsync(null);
+                WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity))
+                    .Activities
+                    .Remove(_selectedActivity);
+                _isDirty = true;
+
+                SetWeekOrdering();
+
             }
             else if (activities.Count == 1)
             {
@@ -347,22 +349,20 @@ namespace WeekPlanner.ViewModels
             }
             else
             {
-                int? order = activities.First().Order;
                 DayEnum? dayEnum = WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Day;
+                ActivityDTO activityDTO = new ActivityDTO(_standardChoiceBoardPictoDTO, activities.First().Order, StateEnum.Normal) { IsChoiceBoard = true };
 
-                _weekForChoiceBoards.Days.Single(d => d.Day == dayEnum).Activities.RemoveAll(a => a.Order == order);
+                _choiceBoardActivities.Remove(_selectedActivity);
 
-                foreach (var item in activities)
-                {
-                    _weekForChoiceBoards.Days.Single(d => d.Day == dayEnum).Activities.Add(item);
-                }
                 WeekDTO.Days.First(d => d.Activities.Contains(_selectedActivity)).Activities.Remove(_selectedActivity);
-                WeekDTO.Days.Single(d => d.Day == dayEnum).Activities.Add(new ActivityDTO(_standardChoiceBoardPictoDTO, order, StateEnum.Normal) { IsChoiceBoard = true});
 
-                WeekDTO.Days.ForEach(a => a.Activities = a.Activities.OrderBy(x => x.Order).ToList());
+                WeekDTO.Days.Single(d => d.Day == dayEnum).Activities.Add(activityDTO);
+
+                _choiceBoardActivities.Add(activityDTO, activities.ToList());
+
+                SetWeekOrdering();
 
                 _isDirty = true;
-                RaisePropertyForDays();
             }
         }
 
@@ -557,20 +557,29 @@ namespace WeekPlanner.ViewModels
 
         private void PutChoiceActivitiesBackIntoSchedule()
         {
-            foreach (var day in _weekForChoiceBoards.Days)
-            {
-                foreach (var item in day.Activities)
-                {
-                    WeekDTO.Days.Single(d => d.Day == day.Day).Activities.Add(item);
-                }
-            }
-
-            _weekForChoiceBoards.Days.ForEach(d => d.Activities.Clear());
 
             foreach (var day in WeekDTO.Days)
             {
+                List<ActivityDTO> choiceBoardActivities = new List<ActivityDTO>();
+                foreach (var activity in day.Activities)
+                {
+                    if (activity.IsChoiceBoard)
+                    {
+                        choiceBoardActivities.Add(activity);
+                    }
+                }
+
+                foreach (var item in choiceBoardActivities)
+                {
+                    if (_choiceBoardActivities.TryGetValue(item, out List<ActivityDTO> unfoldedActivities))
+                    {
+                        day.Activities.AddRange(unfoldedActivities);
+                    }
+                }
                 day.Activities.RemoveAll(a => a.IsChoiceBoard);
             }
+
+            _choiceBoardActivities.Clear();
         }
     }
 }

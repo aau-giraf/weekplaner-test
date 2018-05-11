@@ -66,6 +66,8 @@ namespace WeekPlanner.ViewModels
         });
 
         public ICommand SaveChoiceCommand => new Command(() => SaveChoiceBoard());
+
+        public ICommand DeleteActivityCommand => new Command(() => NavigationService.PopAsync(new ObservableCollection<ActivityDTO>()));
     
 
         public ICommand AddActivityCommand => new Command(async () => await NavigationService.NavigateToAsync<PictogramSearchViewModel>());
