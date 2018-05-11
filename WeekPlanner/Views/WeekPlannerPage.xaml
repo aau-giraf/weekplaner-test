@@ -11,7 +11,8 @@
     Title="{Binding WeekName}">
     <ContentPage.Content>
         <ContentView ControlTemplate="{StaticResource NavBarWithToolbarAndStackTemplate}">
-            <StackLayout>
+            <!--Single day-->
+            <StackLayout x:Name="OneDayView" IsVisible="True" >
                 <Grid IsVisible="{Binding SettingsService.IsInGuardianMode}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -155,6 +156,8 @@
                     <Button Grid.Column="6" Text="Tilføj" Command="{Binding NavigateToPictoSearchCommand}" CommandParameter="{x:Static local:WeekdayDTO+DayEnum.Sunday}" IsEnabled="{Binding IsBusy, Converter={StaticResource NegateBooleanConverter}}" IsVisible="{Binding ToggledDaysWrapper[6].SwitchToggled}"/>
                 </Grid>
             </StackLayout>
+            
+            
         </ContentView>
     </ContentPage.Content>
 </base:PageBase>

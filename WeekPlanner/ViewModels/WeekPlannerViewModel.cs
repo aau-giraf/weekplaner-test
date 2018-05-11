@@ -358,8 +358,8 @@ namespace WeekPlanner.ViewModels
 
                 bool confirmed = dayFromWeekDTO.Activities.Count > 0 ?
                     await _dialogService.ConfirmAsync(
-                        title: "BekrÃ¦ft sletning af ugedag",
-                        message: "Hvis du sletter en ugedag med aktiviteter, sletter du samtidigt disse aktiviter. Er du sikker pÃ¥, at du vil fortsÃ¦tte?",
+                        title: "Bekræft sletning af ugedag",
+                        message: "Hvis du sletter en ugedag med aktiviteter, sletter du samtidigt disse aktiviter. Er du sikker på, at du vil fortsætte?",
                         okText: "Slet ugedag",
                         cancelText: "Annuller") :
                     true;
@@ -536,7 +536,11 @@ namespace WeekPlanner.ViewModels
             }
             else
             {
+				//SetOrientation();
 				MessagingCenter.Send(this, "SetOrientation", "Landscape");
+				MessagingCenter.Send(this, "ChangeView", "Landscape");
+
+
 				await NavigationService.NavigateToAsync<LoginViewModel>(this);
             }
 
@@ -547,13 +551,20 @@ namespace WeekPlanner.ViewModels
 
 		public void SetOrientation()
 		{
+			//if (!SettingsService.IsInGuardianMode)
+			//{
+			//	MessagingCenter.Send(this, "SetOrientation", "Landscape");
+			//	MessagingCenter.Send(this, "ChangeView", "Landscape");
+			//}
 			if (SettingsService.CurrentCitizenSettingDTO.Orientation == SettingDTO.OrientationEnum.Portrait)
 			{
 				MessagingCenter.Send(this, "SetOrientation", "Portrait");
+				MessagingCenter.Send(this, "ChangeView", "Portrait");
 			}
 			else
 			{
 				MessagingCenter.Send(this, "SetOrientation", "Landscape");
+				MessagingCenter.Send(this, "ChangeView", "Landscape");
 			}
 		}
 
