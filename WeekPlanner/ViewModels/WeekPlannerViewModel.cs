@@ -505,17 +505,18 @@ namespace WeekPlanner.ViewModels
                 {
                     SetToCitizenMode();
                     IsBusy = false;
-                    return;
+					SetOrientation();
+					return;
                 }
-                var result = await _dialogService.ActionSheetAsync("Der er Ã¦ndringer der ikke er gemt. Vil du gemme?",
-                    "Annuller", null, "Gem Ã¦ndringer", "Gem ikke");
+                var result = await _dialogService.ActionSheetAsync("Der er Ændringer der ikke er gemt. Vil du gemme?",
+                    "Annuller", null, "Gem Ændringer", "Gem ikke");
 
                 switch (result)
                 {
                     case "Annuller":
                         break;
 
-                    case "Gem Ã¦ndringer":
+                    case "Gem Ændringer":
                         if (WeekNameIsEmpty)
                         {
                             await ShowWeekNameEmptyPrompt();
@@ -534,7 +535,8 @@ namespace WeekPlanner.ViewModels
             }
             else
             {
-                await NavigationService.NavigateToAsync<LoginViewModel>(this);
+				SetOrientation();
+				await NavigationService.NavigateToAsync<LoginViewModel>(this);
             }
 
             RaisePropertyChangedForDayLabels();
@@ -542,7 +544,15 @@ namespace WeekPlanner.ViewModels
             IsBusy = false;
         }
 
-        private bool WeekNameIsEmpty => string.IsNullOrEmpty(WeekName);
+		public void SetOrientation()
+		{
+			if (SettingsService.CurrentCitizenSettingDTO.Orientation == SettingDTO.OrientationEnum.Landscape)
+			{
+				MessagingCenter();
+			}
+		}
+
+		private bool WeekNameIsEmpty => string.IsNullOrEmpty(WeekName);
 
         private Task ShowWeekNameEmptyPrompt() =>
             _dialogService.ShowAlertAsync("Giv venligst ugeplanen et navn, og gem igen.", "Ok",
