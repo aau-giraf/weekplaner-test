@@ -195,15 +195,8 @@ namespace WeekPlanner.ViewModels
             if (dayToAddTo != null)
             {
                 // Insert pictogram in the very bottom of the day
-                var newOrderInBottom = dayToAddTo.Activities.Max(d => d.Order) + 1;
-                if (newOrderInBottom == null)
-                {
-                    dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, 0, StateEnum.Normal));
-                }
-                else
-                {
-                    dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom, StateEnum.Normal));
-                }
+                var newOrderInBottom = dayToAddTo.Activities.Max(d => d.Order) + 1 ?? 0;
+                dayToAddTo.Activities.Add(new ActivityDTO(pictogramDTO, newOrderInBottom, StateEnum.Normal));
                 
                 _isDirty = true;
                 RaisePropertyForDays();
@@ -571,6 +564,8 @@ namespace WeekPlanner.ViewModels
                     WeekDTO.Days.Single(d => d.Day == day.Day).Activities.Add(item);
                 }
             }
+
+            _weekForChoiceBoards.Days.ForEach(d => d.Activities.Clear());
 
             foreach (var day in WeekDTO.Days)
             {
