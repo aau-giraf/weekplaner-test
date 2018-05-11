@@ -510,6 +510,7 @@ namespace WeekPlanner.ViewModels
                 }
                 var result = await _dialogService.ActionSheetAsync("Der er Ændringer der ikke er gemt. Vil du gemme?",
                     "Annuller", null, "Gem Ændringer", "Gem ikke");
+				SetOrientation();
 
                 switch (result)
                 {
@@ -535,7 +536,7 @@ namespace WeekPlanner.ViewModels
             }
             else
             {
-				SetOrientation();
+				MessagingCenter.Send(this, "SetOrientation", "Landscape");
 				await NavigationService.NavigateToAsync<LoginViewModel>(this);
             }
 
@@ -546,9 +547,13 @@ namespace WeekPlanner.ViewModels
 
 		public void SetOrientation()
 		{
-			if (SettingsService.CurrentCitizenSettingDTO.Orientation == SettingDTO.OrientationEnum.Landscape)
+			if (SettingsService.CurrentCitizenSettingDTO.Orientation == SettingDTO.OrientationEnum.Portrait)
 			{
-				MessagingCenter();
+				MessagingCenter.Send(this, "SetOrientation", "Portrait");
+			}
+			else
+			{
+				MessagingCenter.Send(this, "SetOrientation", "Landscape");
 			}
 		}
 
