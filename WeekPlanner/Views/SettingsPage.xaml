@@ -38,6 +38,17 @@
                         </TableSection>
                         <!--Different completion mark-->
                         <!--Orientation lock-->
+                        <TableSection Title="Orientation of skema">
+                            <ViewCell>
+                                <ViewCell.View>
+                                    <StackLayout Orientation="Horizontal" Padding="15, 0">
+                                        <Label Text="Vælge orientation" VerticalOptions="Center"></Label>
+                                        <Picker Title="Orientation" SelectedItem="{Binding Orientation}" ItemsSource="{Binding Orientations}"/>
+                                    </StackLayout>
+                                </ViewCell.View>
+                            </ViewCell>
+                        </TableSection>
+                        <!--Colour theme-->
                         <TableSection Title="Vælg Farvetema">
                             <ViewCell>
                                 <ViewCell.View>

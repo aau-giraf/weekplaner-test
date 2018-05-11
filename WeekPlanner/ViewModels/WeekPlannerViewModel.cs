@@ -115,7 +115,7 @@ namespace WeekPlanner.ViewModels
             SettingsService = settingsService;
             SettingsCurrentCitizen = SettingsService.CurrentCitizenSettingDTO;
             
-
+			
 
             OnBackButtonPressedCommand = new Command(async () => await BackButtonPressed());
             ShowToolbarButton = true;
@@ -135,8 +135,6 @@ namespace WeekPlanner.ViewModels
             {
                 throw new ArgumentException("Must be of type userNameDTO", nameof(navigationData));
             }
-            
-            SetOrientation();
         }
 
 
@@ -283,7 +281,9 @@ namespace WeekPlanner.ViewModels
             IsBusy = true;
             if (SettingsService.IsInGuardianMode)
             {
-                if(!_isDirty) {
+				SetOrientation();
+
+				if (!_isDirty) {
                     SetToCitizenMode();
                     IsBusy = false;
                     return;
@@ -312,10 +312,13 @@ namespace WeekPlanner.ViewModels
                         SetToCitizenMode();
                         break;
                 }
+
+
             }
             else
             {
-                await NavigationService.NavigateToAsync<LoginViewModel>(this);
+				MessagingCenter.Send(this, "SetOrientation", "Landscape");
+				await NavigationService.NavigateToAsync<LoginViewModel>(this);
             }
 
             IsBusy = false;
@@ -424,7 +427,7 @@ namespace WeekPlanner.ViewModels
 
         public void SetOrientation()
         {
-            if (NumberOfDaysShown == 1)
+            if (SettingsCurrentCitizen.Orientation == SettingDTO.OrientationEnum.Portrait)
             {
                 MessagingCenter.Send(this, "SetOrientation", "Portrait");
             }

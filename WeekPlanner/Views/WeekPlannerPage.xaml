@@ -51,7 +51,7 @@
                 </Grid.RowDefinitions>
                 <!-- DAYS TITLEBAR -->
                 <Grid ColumnSpan="7">
-                    <Label Text="Mandag" Grid.Column="{Binding MondayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsMondayShown}" />
+                    <Label x:Name="coolbeans" Text="Mandag" Grid.Column="{Binding MondayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsMondayShown}" />
                     <Label Text="Tirsdag" Grid.Column="{Binding TuesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsTuesdayShown}" />
                     <Label Text="Onsdag" Grid.Column="{Binding WednesdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsWednesdayShown}" />
                     <Label Text="Torsdag" Grid.Column="{Binding ThursdayColumnInt}" TextColor="{StaticResource WhiteColor}" HorizontalTextAlignment="Center" IsVisible="{Binding IsThursdayShown}" />

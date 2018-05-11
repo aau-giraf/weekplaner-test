@@ -71,41 +71,23 @@ namespace WeekPlanner.ViewModels
             UpdateSettingsAsync();
         }
 
-        private bool _orientationSlider;
+		public IEnumerable<SettingDTO.OrientationEnum> Orientations { get; } = new List<SettingDTO.OrientationEnum>
+		{
+			SettingDTO.OrientationEnum.Landscape, SettingDTO.OrientationEnum.Portrait
+		};
 
-        public bool OrientationSwitch
-        {
-            get => _orientationSlider;
-            set
-            {
-                if (Settings.Orientation == SettingDTO.OrientationEnum.Portrait)
-                {
-                    _orientationSlider = true;
-                }
-                else
-                {
-                    _orientationSlider = false;
-                }
+		public SettingDTO.OrientationEnum Orientation
+		{
+			get => _settingsService.CurrentCitizenSettingDTO.Orientation; 
+			set
+			{
+				Settings.Orientation = value;
+				RaisePropertyChanged(() => Orientation);
+				UpdateSettingsAsync();
+			}
+		}
 
-                RaisePropertyChanged(() => OrientationSwitch);
-                UpdateSettingsAsync();
-            }
-        }
-
-        public ICommand HandleSwitchChangedCommand => new Command(() =>
-        {
-            if (Settings.Orientation == SettingDTO.OrientationEnum.Portrait)
-            {
-                Settings.Orientation = SettingDTO.OrientationEnum.Landscape;
-            }
-            else
-            {
-                Settings.Orientation = SettingDTO.OrientationEnum.Portrait;
-            }
-        });
-
-
-        private async void UpdateSettingsAsync()
+		private async Task UpdateSettingsAsync()
         {
             _settingsService.UseTokenFor(UserType.Citizen);
             await _requestService.SendRequest(_userApi.V1UserSettingsPatchAsync(Settings));
