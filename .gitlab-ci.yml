@@ -14,7 +14,7 @@ build_android:
         # Missing: iOS Version
         # Missing: Windows Version
 
-        - mv /Giraf/weekplanner/Droid/obj/Release/android/bin/dk.aau.cs.giraf.weekplanner.apk /Giraf/weekplanner/dk.aau.cs.giraf.weekplanner.apk
+        - mv /Giraf/weekplanner/Droid/obj/Release/android/bin/dk.aau.cs.giraf.weekplanner.apk $CI_PROJECT_DIR/dk.aau.cs.giraf.weekplanner.apk
 
     artifacts:
         paths:
@@ -26,7 +26,7 @@ test:
     script:
         - cp /Giraf/weekplanner/WeekPlanner/appsettings.template.json /Giraf/weekplanner/WeekPlanner/appsettings.Development.json
         - mono /nuget.exe restore /Giraf/weekplanner
-        - msbuild  /Giraf/weekplanner/WeekPlanner.Tests/WeekPlanner.Tests.csproj
+        - msbuild /Giraf/weekplanner/WeekPlanner.Tests/WeekPlanner.Tests.csproj
         - dotnet test /Giraf/weekplanner/WeekPlanner.Tests/WeekPlanner.Tests.csproj
 
 deploy:
@@ -42,8 +42,8 @@ deploy:
         - echo $KEYSTORE | base64 -di > ./giraf.keystore
         - /android/build-tools/27.0.3/zipalign -f -v 4 $CI_PROJECT_DIR/dk.aau.cs.giraf.weekplanner.apk $CI_PROJECT_DIR/dk.aau.cs.giraf.weekplanner-Signed.apk
         - /android/build-tools/27.0.3/apksigner sign --ks ./giraf.keystore --ks-key-alias $KEYSTOREALIAS --ks-pass pass:$KEYSTOREPASSWORD ./dk.aau.cs.giraf.weekplanner-Signed.apk
-        
-        - /android/build-tools/27.0.3/apksigner verify -v /dk.aau.cs.giraf.weekplanner-Signed.apk
+
+        - /android/build-tools/27.0.3/apksigner verify -v $CI_PROJECT_DIR/dk.aau.cs.giraf.weekplanner-Signed.apk
         # Verifying is not necessary for deployment
     artifacts:
         paths:
